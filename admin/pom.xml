@@ -67,6 +67,12 @@
             <artifactId>generator</artifactId>
         </dependency>
 
+        <!-- 代码生成-->
+        <dependency>
+            <groupId>com.all.powerful</groupId>
+            <artifactId>bot</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>

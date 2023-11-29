@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('支付详细')"/>
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m-t" id="jobForm" th:if="${name == 'pay'}">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">序号：</label>
+            <div class="form-control-static" th:text="${pay.id}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">订单编号：</label>
+            <div class="form-control-static" th:text="${pay.orderId}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">电报ID：</label>
+            <div class="form-control-static" th:text="${pay.userId}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">用户名：</label>
+            <div class="form-control-static" th:text="${pay.username}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">网名：</label>
+            <div class="form-control-static" th:text="${pay.nickname}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">支付金额：</label>
+            <div class="form-control-static" th:text="${pay.amount}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">支付状态：</label>
+            <div class="form-control-static" th:class="${pay.status == '0' ? 'label label-primary' : (pay.status == '1' ? 'label label-warning' : 'label label-danger')}" th:text="${pay.status == '0' ? '支付成功' : (pay.status == '1' ? '待支付' : (pay.status == '2' ? '支付失败' : '用户取消'))}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">下发地址：</label>
+            <div class="form-control-static" th:text="${pay.address}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">区块交易ID：</label>
+            <div class="form-control-static" th:text="${pay.blockId}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">过期时间：</label>
+            <div class="form-control-static" th:text="${pay.expirationTime}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">创建时间：</label>
+            <div class="form-control-static" th:text="${pay.createTime}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">更新时间：</label>
+            <div class="form-control-static" th:text="${pay.updateTime}">
+            </div>
+        </div>
+    </form>
+
+</div>
+</body>
+</html>

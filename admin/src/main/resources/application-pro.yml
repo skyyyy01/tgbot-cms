@@ -1,3 +1,18 @@
+# 项目相关配置
+powerful:
+    # 名称
+    name: TelegramTRX
+    # 版本
+    version: 1.0.0
+    # 版权年份
+    copyrightYear: 2023
+    # 实例演示开关
+    demoEnabled: true
+    # 文件路径 示例（ Windows配置D:/ruoyi/uploadPath，Linux配置 /home/ruoyi/uploadPath）
+    profile: /www/wwwroot/bot
+    # 获取ip地址开关
+    addressEnabled: false
+
 # 数据源配置
 spring:
     datasource:
@@ -5,9 +20,12 @@ spring:
         driverClassName: com.mysql.cj.jdbc.Driver
         druid:
             # 主库数据源
+            # ***REMOVED***
             master:
                 url: jdbc:mysql://localhost:3306/trx?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
-                username: root
+#                username: root
+#                password: ***REMOVED***
+                username: trx
                 password: ***REMOVED***
             # 从库数据源
             slave:

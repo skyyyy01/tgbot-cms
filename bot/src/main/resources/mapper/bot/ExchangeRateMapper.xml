@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.all.powerful.bot.mapper.ExchangeRateMapper">
+
+    <resultMap type="ExchangeRate" id="ExchangeRateResult">
+        <result property="id"    column="id"    />
+        <result property="min"    column="min"    />
+        <result property="max"    column="max"    />
+        <result property="rate"    column="rate"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectExchangeRateVo">
+        select id, min, max, rate, create_by, create_time, update_by, update_time from exchange_rate
+    </sql>
+
+    <select id="selectExchangeRateList" parameterType="ExchangeRate" resultMap="ExchangeRateResult">
+        <include refid="selectExchangeRateVo"/>
+        <where>
+            <if test="min != null "> and min &gt;= #{min}</if>
+            <if test="max != null "> and max &lt;= #{max}</if>
+            <if test="rate != null "> and rate = #{rate}</if>
+        </where>
+    </select>
+
+    <select id="selectExchangeRateById" parameterType="Long" resultMap="ExchangeRateResult">
+        <include refid="selectExchangeRateVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectExchangeRate" parameterType="Decimal" resultType="Decimal">
+        select rate from exchange_rate
+        where min &lt;= #{amount} and max &gt;= #{amount}
+        limit 1
+    </select>
+
+    <insert id="insertExchangeRate" parameterType="ExchangeRate" useGeneratedKeys="true" keyProperty="id">
+        insert into exchange_rate
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="min != null">min,</if>
+            <if test="max != null">max,</if>
+            <if test="rate != null">rate,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="min != null">#{min},</if>
+            <if test="max != null">#{max},</if>
+            <if test="rate != null">#{rate},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateExchangeRate" parameterType="ExchangeRate">
+        update exchange_rate
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="min != null">min = #{min},</if>
+            <if test="max != null">max = #{max},</if>
+            <if test="rate != null">rate = #{rate},</if>
+            <if test="createBy != null and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteExchangeRateById" parameterType="Long">
+        delete from exchange_rate where id = #{id}
+    </delete>
+
+    <delete id="deleteExchangeRateByIds" parameterType="String">
+        delete from exchange_rate where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

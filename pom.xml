@@ -175,6 +175,13 @@
                 <version>${all.powerful.version}</version>
             </dependency>
 
+            <!-- 机器人模块-->
+            <dependency>
+                <groupId>com.all.powerful</groupId>
+                <artifactId>bot</artifactId>
+                <version>${all.powerful.version}</version>
+            </dependency>
+
             <!-- 通用工具-->
             <dependency>
                 <groupId>com.all.powerful</groupId>
@@ -192,6 +199,7 @@
         <module>quartz</module>
         <module>generator</module>
         <module>common</module>
+        <module>bot</module>
     </modules>
     <packaging>pom</packaging>
 

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('下发记录列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>订单编号：</label>
+                                <input type="text" name="orderId"/>
+                            </li>
+                            <li>
+                                <label>电报ID：</label>
+                                <input type="text" name="userId"/>
+                            </li>
+                            <li>
+                                <label>用户名：</label>
+                                <input type="text" name="username"/>
+                            </li>
+                            <li>
+                                <label>支付状态：</label>
+                                <select name="status" th:with="type=${@dict.getType('pay_status')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <label>下发状态：</label>
+                                <select name="pStatus" th:with="type=${@dict.getType('pay_out_status')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+                            <li class="select-time">
+                                <label>创建时间：</label>
+                                <input type="text" class="time-input" id="startTime" placeholder="开始时间" name="params[beginCreateTime]"/>
+                                <span>-</span>
+                                <input type="text" class="time-input" id="endTime" placeholder="结束时间" name="params[endCreateTime]"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="bot:payout:export">
+                    <i class="fa fa-download"></i> 导出
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+     <th:block th:include="include :: bootstrap-table-editable-js" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('bot:payout:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('bot:payout:remove')}]];
+        var statusDatas = [[${@dict.getType('pay_status')}]];
+        var pStatusDatas = [[${@dict.getType('pay_out_status')}]];
+        var prefix = ctx + "bot/payout";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                detailUrl: prefix + "/detail/{id}",
+                onEditableSave: onEditableSave,
+                modalName: "下发记录",
+                columns: [{
+                    checkbox: false
+                },
+                {
+                    field: 'id',
+                    title: 'ID',
+                    visible: false
+                },
+                {
+                    field: 'orderId',
+                    title: '订单编号'
+                },
+                {
+                    field: 'userId',
+                    title: '电报ID'
+                },
+                {
+                    field: 'username',
+                    title: '用户名',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    }
+                },
+                {
+                    field: 'nickname',
+                    title: '网名',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    }
+                },
+                {
+                    field: 'amount',
+                    title: '支付金额'
+                },
+                {
+                    field: 'actualAmount',
+                    title: '实际支付金额'
+                },
+                {
+                    field: 'status',
+                    title: '支付状态',
+                    formatter: function(value, row, index) {
+                       return $.table.selectDictLabel(statusDatas, value);
+                    }
+                },
+                {
+                    field: 'payAmount',
+                    title: '应下发'
+                },
+                {
+                    field: 'pStatus',
+                    title: '下发状态',
+                    editable : {
+                        type : 'select',
+                        title : '下发状态',
+                        source : [{
+                            value : 0,
+                            text : "下发成功"
+                        }, {
+                            value : 1,
+                            text : "待下发"
+                        }, {
+                            value : 2,
+                            text : "审核中"
+                        }, {
+                            value : 3,
+                            text : "审核失败"
+                        }]
+                    }
+                },
+                {
+                    field: 'address',
+                    title: '下发地址',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        let text = $.common.nullToStr(value);
+                        if(text.length > 15) {
+                            let head = text.substr(0,6)
+                            let tail = text.substr(text.length - 6)
+                            text = head + '...' + tail
+                            actions.push($.common.sprintf('<a href="###" class="tooltip-show" data-toggle="tooltip" data-target="copy" title="%s">%s</a> ', value, text))
+                        } else {
+                            actions.push(text)
+                        }
+                        if (value) {
+                            actions.push('<a class="btn btn-default btn-xs" href="javascript:void(0)" onclick="copyText(\'' + value + '\')"><i class="fa fa-copy"></i></a>')
+                        }
+                        return actions.join('');
+                    }
+                },
+                {
+                    field: 'hash',
+                    title: '交易哈希',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(statusDatas, value);
+                    }
+                },
+                {
+                    field: 'remark',
+                    title: '备注',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(statusDatas, value);
+                    }
+                },
+                {
+                    field: 'createTime',
+                    title: '创建时间'
+                },
+                {
+                    field: 'updateTime',
+                    title: '更新时间'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push("<a class='btn btn-default btn-xs' href='javascript:void(0)' onclick='$.operate.detail(" + row.id + ")'><i class='fa fa-search'></i>详细</a> ")
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+
+        function onEditableSave (field, row, rowIndex, oldValue, $el) {
+            // alert("字段名：" + field + "，当前值：" + row[field]  + "，旧值：" + oldValue);
+            let newName = ""
+            let fieldName = ""
+            if (field === "pStatus") {
+                fieldName = "下发状态"
+                // if (row[field] === "0"){
+                //     newName = "下发成功"
+                // } else if (row[field] === "1"){
+                //     newName = "待下发"
+                // } else if (row[field] === "2"){
+                //     newName = "审核中"
+                // } else if (row[field] === "3"){
+                //     newName = "审核失败"
+                // }
+                $.operate.post(prefix + "/edit", {"id" : row.id, "pStatus": row[field]});
+                // $.modal.confirm("确认修改" + fieldName + "为[" + newName + "]吗？", function () {
+                //     $.operate.post(prefix + "/edit", {"id" : row.id, "pStatus": row[field]});
+                // })
+            }
+
+        }
+
+        function copyText(text) {
+            let oInput
+            if (document.getElementById('copyInput')) {
+                oInput = document.getElementById('copyInput')
+            } else {
+                oInput = document.createElement('input')
+            }
+            oInput.value = text
+            oInput.id = 'copyInput'
+            oInput.className = 'copy-input'
+            document.body.appendChild(oInput)
+            oInput.select() // 选择对象;
+            document.execCommand('Copy') // 执行浏览器复制命令
+            $.modal.msgSuccess("复制成功");
+        }
+
+    </script>
+</body>
+</html>

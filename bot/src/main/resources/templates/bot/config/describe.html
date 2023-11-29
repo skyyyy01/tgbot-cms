@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('配置说明')" />
+	<style type="text/css">
+		h4 {
+			margin: 0px 0px 3px 0px;
+		}
+
+		.white-space {
+			background: #E7ECF3;
+			padding: 5px;
+			margin-bottom: 20px;
+			font-size: 15px;
+		}
+
+		table {
+			width: 100%;
+		}
+
+		.block {
+			color: #333333;
+			background: #E7ECF3;
+			border: 1px solid #AAA;
+			margin: 5px;
+			padding: 13px;
+			border-radius: 10px;
+			-moz-border-radius: 10px;
+			-webkit-border-radius: 10px;
+		}
+		pre {
+			white-space: pre-wrap;
+			word-wrap: break-word;
+		}
+	</style>
+</head>
+<body class="white-bg">
+<div class="block" style="min-height:100%;">
+	<h2 style="text-align: center">配置说明</h2>
+	<h4>可用替换符</h4>
+	<div class="white-space" style="overflow:auto;" >
+		所有自定义文本中只要包含以下替换符，即可替换成相应内容
+	</div>
+	<div class="white-space" style="overflow:auto;">
+		<table style="width:100%;" class="data_table">
+			<thead>
+				<tr>
+				<th>替换符</th>
+				<th>说明</th>
+				</tr>
+			</thead>
+			<tbody>
+			<tr>
+				<td>{record}</td>
+				<td>链上下发记录</td>
+			</tr>
+			<tr>
+				<td>{user_id}</td>
+				<td>用户ID</td>
+			</tr>
+			<tr>
+				<td>{username}</td>
+				<td>用户名</td>
+			</tr>
+			<tr>
+				<td>{nickname}</td>
+				<td>用户昵称</td>
+			</tr>
+			<tr>
+				<td>{register_time}</td>
+				<td>注册时间</td>
+			</tr>
+			<tr>
+				<td>{total_buy}</td>
+				<td>用户总支付金额</td>
+			</tr>
+			<tr>
+				<td>{total_count}</td>
+				<td>用户总支付成功次数</td>
+			</tr>
+			<tr>
+				<td>{total_send}</td>
+				<td>用户总下发</td>
+			</tr>
+			<tr>
+				<td>{order}</td>
+				<td>用户订单记录</td>
+			</tr>
+			<tr>
+				<td>{order_id}</td>
+				<td>订单编号</td>
+			</tr>
+			<tr>
+				<td>{amount}</td>
+				<td>购买金额</td>
+			</tr>
+			<tr>
+				<td>{rate}</td>
+				<td>当前汇率</td>
+			</tr>
+			<tr>
+				<td>{receive}</td>
+				<td>客户会收到数量</td>
+			</tr>
+			<tr>
+				<td>{receive_address}</td>
+				<td>客户接收地址</td>
+			</tr>
+			<tr>
+				<td>{wallet_address}</td>
+				<td>收款地址</td>
+			</tr>
+			<tr>
+				<td>{pay_amount}</td>
+				<td>支付金额</td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+	<h4>Markdown style（TG字体格式化）：</h4>
+	<div>
+		<pre>
+			<code>
+*粗体*
+_斜体_
+[超链接](http://www.example.com/)
+[点击打开TG用户](tg://user?id=123456789)
+`地址放其中可以实现点击复制`
+```
+代码块
+```
+```python
+代码块
+```
+			</code>
+		</pre>
+	</div>
+</div>
+
+
+<!--<form autocomplete="off" class="form-horizontal m-t">-->
+<!--	<h2 class="form-header h2">[[#{webhook.push}]]</h2>-->
+<!--	<div class="form-group">-->
+<!--		<label class="col-sm-2 control-label">[[#{webhook.url}]]：</label>-->
+<!--		<div class="form-control-static" th:text="${pushUrl}">-->
+<!--		</div>-->
+<!--	</div>-->
+<!--	<div class="form-group">-->
+<!--		<label class="col-sm-2 control-label">[[#{webhook.method}]]：</label>-->
+<!--		<div class="form-control-static" th:text="${pushMethod}">-->
+<!--		</div>-->
+<!--	</div>-->
+<!--	<div class="form-group">-->
+<!--		<label class="col-sm-2 control-label">[[#{operation.request.parameter}]]：</label>-->
+<!--		<div class="form-control-static col-sm-9"><pre>-->
+<!--			<code id="pushParam"></code>-->
+<!--		</pre></div>-->
+<!--	</div>-->
+<!--	<h4 class="form-header h4">[[#{webhook.cd}]]</h4>-->
+<!--	<div class="form-group">-->
+<!--		<label class="col-sm-2 control-label">[[#{webhook.url}]]：</label>-->
+<!--		<div class="form-control-static" th:text="${cbUrl}">-->
+<!--		</div>-->
+<!--	</div>-->
+<!--	<div class="form-group">-->
+<!--		<label class="col-sm-2 control-label">[[#{webhook.method}]]：</label>-->
+<!--		<div class="form-control-static" th:text="${cbMethod}">-->
+<!--		</div>-->
+<!--	</div>-->
+<!--	<div class="form-group">-->
+<!--		<label class="col-sm-2 control-label">[[#{operation.request.parameter}]]：</label>-->
+<!--		<div class="form-control-static col-sm-9"><pre th:text="${cbParam}"></pre></div>-->
+<!--	</div>-->
+<!--</form>-->
+
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: jsonview-js" />
+<script th:inline="javascript">
+	// $(function() {
+	// 	var pushParam = [[${pushParam}]];
+	// 	if ($.common.isNotEmpty(pushParam) && pushParam.length < 2000) {
+	// 		$("#pushParam").JSONView(pushParam);
+	// 	} else {
+	// 		$("#pushParam").text(pushParam);
+	// 	}
+	//
+	// 	var cbParam = [[${cbParam}]];
+	// 	if ($.common.isNotEmpty(cbParam) && cbParam.length < 2000) {
+	// 		$("#cbParam").JSONView(cbParam);
+	// 	} else {
+	// 		$("#cbParam").text(cbParam);
+	// 	}
+	// });
+</script>
+</body>
+</html>

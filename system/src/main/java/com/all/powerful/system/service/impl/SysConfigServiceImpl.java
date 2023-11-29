@@ -1,12 +1,5 @@
 package com.all.powerful.system.service.impl;
 
-import java.util.List;
-import javax.annotation.PostConstruct;
-
-import com.all.powerful.system.mapper.SysConfigMapper;
-import com.all.powerful.system.service.ISysConfigService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import com.all.powerful.common.constant.Constants;
 import com.all.powerful.common.constant.UserConstants;
 import com.all.powerful.common.core.text.Convert;
@@ -14,6 +7,13 @@ import com.all.powerful.common.exception.ServiceException;
 import com.all.powerful.common.utils.CacheUtils;
 import com.all.powerful.common.utils.StringUtils;
 import com.all.powerful.system.domain.SysConfig;
+import com.all.powerful.system.mapper.SysConfigMapper;
+import com.all.powerful.system.service.ISysConfigService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
+import java.util.List;
 
 /**
  * 参数配置 服务层实现
@@ -46,6 +46,14 @@ public class SysConfigServiceImpl implements ISysConfigService
     {
         SysConfig config = new SysConfig();
         config.setConfigId(configId);
+        return configMapper.selectConfig(config);
+    }
+
+    @Override
+    public SysConfig selectConfigByConfigKey(String configKey)
+    {
+        SysConfig config = new SysConfig();
+        config.setConfigKey(configKey);
         return configMapper.selectConfig(config);
     }
 

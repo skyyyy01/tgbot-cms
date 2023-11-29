@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.all.powerful.bot.mapper.BotListMapper">
+
+    <resultMap type="BotList" id="BotListResult">
+        <result property="botId"    column="bot_id"    />
+        <result property="botUserName"    column="bot_user_name"    />
+        <result property="botToken"    column="bot_token"    />
+        <result property="status"    column="status"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectBotListVo">
+        select bot_id, bot_user_name, bot_token, status, create_by, create_time, update_by, update_time, remark from bot_list
+    </sql>
+
+    <select id="selectBotListList" parameterType="BotList" resultMap="BotListResult">
+        <include refid="selectBotListVo"/>
+        <where>
+            <if test="botUserName != null  and botUserName != ''"> and bot_user_name like concat('%', #{botUserName}, '%')</if>
+            <if test="botToken != null  and botToken != ''"> and bot_token = #{botToken}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+
+    <select id="selectBotListByBotId" parameterType="Long" resultMap="BotListResult">
+        <include refid="selectBotListVo"/>
+        where bot_id = #{botId}
+    </select>
+
+    <insert id="insertBotList" parameterType="BotList" useGeneratedKeys="true" keyProperty="botId">
+        insert into bot_list
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="botUserName != null and botUserName != ''">bot_user_name,</if>
+            <if test="botToken != null and botToken != ''">bot_token,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="botUserName != null and botUserName != ''">#{botUserName},</if>
+            <if test="botToken != null and botToken != ''">#{botToken},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBotList" parameterType="BotList">
+        update bot_list
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="botUserName != null and botUserName != ''">bot_user_name = #{botUserName},</if>
+            <if test="botToken != null and botToken != ''">bot_token = #{botToken},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where bot_id = #{botId}
+    </update>
+
+    <update id="updateBotStatus" parameterType="BotList">
+        update bot_list
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where bot_id = #{botId}
+    </update>
+
+    <delete id="deleteBotListByBotId" parameterType="Long">
+        delete from bot_list where bot_id = #{botId}
+    </delete>
+
+    <delete id="deleteBotListByBotIds" parameterType="String">
+        delete from bot_list where bot_id in
+        <foreach item="botId" collection="array" open="(" separator="," close=")">
+            #{botId}
+        </foreach>
+    </delete>
+
+</mapper>

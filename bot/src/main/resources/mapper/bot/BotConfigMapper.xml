@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.all.powerful.bot.mapper.BotConfigMapper">
+
+    <resultMap type="BotConfig" id="BotConfigResult">
+        <result property="configId"    column="config_id"    />
+        <result property="configName"    column="config_name"    />
+        <result property="parentName"     column="parent_name"    />
+        <result property="showName"    column="show_name"    />
+        <result property="configType"    column="config_type"    />
+        <result property="parentId"    column="parent_id"    />
+        <result property="orderNum"    column="order_num"    />
+        <result property="url"    column="url"    />
+        <result property="image"    column="image"    />
+        <result property="video"    column="video"    />
+        <result property="text"    column="text"    />
+        <result property="triggerType"    column="trigger_type"    />
+        <result property="callbackData"    column="callback_data"    />
+        <result property="callbackText"    column="callback_text"    />
+        <result property="visible"    column="visible"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectBotConfigVo">
+        select config_id, config_name, show_name, config_type, parent_id, order_num, url, image, video, text, trigger_type, callback_data, callback_text, visible, create_by, create_time, update_by, update_time, remark from bot_config
+    </sql>
+
+    <select id="selectBotConfigList" parameterType="BotConfig" resultMap="BotConfigResult">
+        <include refid="selectBotConfigVo"/>
+        <where>
+            <if test="configName != null  and configName != ''"> and config_name like concat('%', #{configName}, '%')</if>
+            <if test="configType != null  and configType != ''"> and config_type = #{configType}</if>
+            <if test="triggerType != null  and triggerType != ''"> and trigger_type = #{triggerType}</if>
+            <if test="visible != null  and visible != ''"> and visible = #{visible}</if>
+            <if test="callbackText != null  and callbackText != ''"> and callback_text = #{callbackText}</if>
+            <if test="parentId != null  and parentId != ''"> and parent_id = #{parentId}</if>
+        </where>
+        order by parent_id, order_num
+    </select>
+
+    <select id="selectBotConfigByConfigId" parameterType="Long" resultMap="BotConfigResult">
+        select t.config_id, t.config_name, t.show_name, t.config_type, t.parent_id, t.order_num, t.url, t.image, t.video, t.text, t.trigger_type, t.callback_data, t.callback_text, t.visible, t.create_by, t.create_time, t.update_by, t.update_time, t.remark,
+        (SELECT config_name FROM bot_config WHERE config_id = t.parent_id) parent_name
+        from bot_config t
+        where t.config_id = #{configId}
+    </select>
+
+        <select id="selectBotConfigByShowName" parameterType="String" resultMap="BotConfigResult">
+        select t.config_id, t.config_name, t.show_name, t.config_type, t.parent_id, t.order_num, t.url, t.image, t.video, t.text, t.trigger_type, t.callback_data, t.callback_text, t.visible, t.create_by, t.create_time, t.update_by, t.update_time, t.remark
+        from bot_config t
+        where t.show_name = #{showName} and t.config_type = 'F'
+        limit 1
+    </select>
+
+    <select id="selectBotConfigByCallbackText" parameterType="String" resultMap="BotConfigResult">
+        select t.config_id, t.config_name, t.show_name, t.config_type, t.parent_id, t.order_num, t.url, t.image, t.video, t.text, t.trigger_type, t.callback_data, t.callback_text, t.visible, t.create_by, t.create_time, t.update_by, t.update_time, t.remark
+        from bot_config t
+        where t.callback_text = #{callbackText} and (t.config_type = 'F' or t.config_type = 'D')
+        limit 1
+    </select>
+
+    <select id="selectBotConfigByCallbackData" parameterType="String" resultMap="BotConfigResult">
+        select t.config_id, t.config_name, t.show_name, t.config_type, t.parent_id, t.order_num, t.url, t.image, t.video, t.text, t.trigger_type, t.callback_data, t.callback_text, t.visible, t.create_by, t.create_time, t.update_by, t.update_time, t.remark
+        from bot_config t
+        where t.callback_data = #{callbackData} and t.config_type = 'B'
+        limit 1
+    </select>
+
+    <insert id="insertBotConfig" parameterType="BotConfig" useGeneratedKeys="true" keyProperty="configId">
+        insert into bot_config
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="configName != null and configName != ''">config_name,</if>
+            <if test="showName != null and showName != ''">show_name,</if>
+            <if test="configType != null">config_type,</if>
+            <if test="parentId != null">parent_id,</if>
+            <if test="orderNum != null">order_num,</if>
+            <if test="url != null">url,</if>
+            <if test="image != null">image,</if>
+            <if test="video != null">video,</if>
+            <if test="text != null">text,</if>
+            <if test="triggerType != null">trigger_type,</if>
+            <if test="callbackData != null">callback_data,</if>
+            <if test="callbackText != null">callback_text,</if>
+            <if test="visible != null">visible,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="configName != null and configName != ''">#{configName},</if>
+            <if test="showName != null and showName != ''">#{showName},</if>
+            <if test="configType != null">#{configType},</if>
+            <if test="parentId != null">#{parentId},</if>
+            <if test="orderNum != null">#{orderNum},</if>
+            <if test="url != null">#{url},</if>
+            <if test="image != null">#{image},</if>
+            <if test="video != null">#{video},</if>
+            <if test="text != null">#{text},</if>
+            <if test="triggerType != null">#{triggerType},</if>
+            <if test="callbackData != null">#{callbackData},</if>
+            <if test="callbackText != null">#{callbackText},</if>
+            <if test="visible != null">#{visible},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBotConfig" parameterType="BotConfig">
+        update bot_config
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="configName != null and configName != ''">config_name = #{configName},</if>
+            <if test="showName != null and showName != ''">show_name = #{showName},</if>
+            <if test="configType != null">config_type = #{configType},</if>
+            <if test="parentId != null">parent_id = #{parentId},</if>
+            <if test="orderNum != null">order_num = #{orderNum},</if>
+            <if test="url != null">url = #{url},</if>
+            <if test="image != null">image = #{image},</if>
+            <if test="video != null">video = #{video},</if>
+            <if test="text != null">text = #{text},</if>
+            <if test="triggerType != null">trigger_type = #{triggerType},</if>
+            <if test="callbackData != null">callback_data = #{callbackData},</if>
+            <if test="callbackText != null">callback_text = #{callbackText},</if>
+            <if test="visible != null">visible = #{visible},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where config_id = #{configId}
+    </update>
+
+    <delete id="deleteBotConfigByConfigId" parameterType="Long">
+        delete from bot_config where config_id = #{configId}
+    </delete>
+
+    <delete id="deleteBotConfigByConfigIds" parameterType="String">
+        delete from bot_config where config_id in
+        <foreach item="configId" collection="array" open="(" separator="," close=")">
+            #{configId}
+        </foreach>
+    </delete>
+
+    <select id="selectConfigAll" resultMap="BotConfigResult">
+        <include refid="selectBotConfigVo"/>
+        order by parent_id, order_num
+    </select>
+
+</mapper>

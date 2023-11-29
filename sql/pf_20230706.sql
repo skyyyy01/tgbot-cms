@@ -154,10 +154,10 @@ create table sys_menu (
 -- 初始化-菜单信息表数据
 -- ----------------------------
 -- 一级菜单
-insert into sys_menu values('1', '系统管理', '0', '1', '#',                '',          'M', '0', '1', '', 'fa fa-gear',           'admin', sysdate(), '', null, '系统管理目录');
-insert into sys_menu values('2', '系统监控', '0', '2', '#',                '',          'M', '0', '1', '', 'fa fa-video-camera',   'admin', sysdate(), '', null, '系统监控目录');
-insert into sys_menu values('3', '系统工具', '0', '3', '#',                '',          'M', '0', '1', '', 'fa fa-bars',           'admin', sysdate(), '', null, '系统工具目录');
-insert into sys_menu values('4', '若依官网', '0', '4', 'http://ruoyi.vip', 'menuBlank', 'C', '0', '1', '', 'fa fa-location-arrow', 'admin', sysdate(), '', null, '若依官网地址');
+insert into sys_menu values('1', '系统管理', '0', '5', '#',                '',          'M', '0', '1', '', 'fa fa-gear',           'admin', sysdate(), '', null, '系统管理目录');
+insert into sys_menu values('2', '系统监控', '0', '6', '#',                '',          'M', '0', '1', '', 'fa fa-video-camera',   'admin', sysdate(), '', null, '系统监控目录');
+insert into sys_menu values('3', '系统工具', '0', '7', '#',                '',          'M', '0', '1', '', 'fa fa-bars',           'admin', sysdate(), '', null, '系统工具目录');
+-- insert into sys_menu values('4', '若依官网', '0', '4', 'http://ruoyi.vip', 'menuBlank', 'C', '0', '1', '', 'fa fa-location-arrow', 'admin', sysdate(), '', null, '若依官网地址');
 -- 二级菜单
 insert into sys_menu values('100',  '用户管理', '1', '1', '/system/user',          '', 'C', '0', '1', 'system:user:view',         'fa fa-user-o',          'admin', sysdate(), '', null, '用户管理菜单');
 insert into sys_menu values('101',  '角色管理', '1', '2', '/system/role',          '', 'C', '0', '1', 'system:role:view',         'fa fa-user-secret',     'admin', sysdate(), '', null, '角色管理菜单');
@@ -529,7 +529,7 @@ create table sys_config (
   config_id         int(5)          not null auto_increment    comment '参数主键',
   config_name       varchar(100)    default ''                 comment '参数名称',
   config_key        varchar(100)    default ''                 comment '参数键名',
-  config_value      varchar(500)    default ''                 comment '参数键值',
+  config_value      varchar(2048)    default ''                 comment '参数键值',
   config_type       char(1)         default 'N'                comment '系统内置（Y是 N否）',
   create_by         varchar(64)     default ''                 comment '创建者',
   create_time       datetime                                   comment '创建时间',
@@ -718,3 +718,369 @@ create table gen_table_column (
   update_time       datetime                                   comment '更新时间',
   primary key (column_id)
 ) engine=innodb auto_increment=1 comment = '代码生成业务表字段';
+
+
+INSERT INTO sys_dict_type (`dict_id`, `dict_name`, `dict_type`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (100, '配置类型', 'bot_config_type', '0', 'admin', '2023-11-19 23:44:00', '', NULL, NULL);
+INSERT INTO sys_dict_type (`dict_id`, `dict_name`, `dict_type`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (101, '触发方式', 'bot_trigger_type', '0', 'admin', '2023-11-19 23:44:18', '', NULL, NULL);
+
+INSERT INTO sys_dict_data (`dict_code`, `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`, `list_class`, `is_default`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (100, 1, '普通按钮', 'B', 'bot_config_type', NULL, 'info', 'N', '0', 'admin', '2023-11-19 23:44:43', '', NULL, NULL);
+INSERT INTO sys_dict_data (`dict_code`, `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`, `list_class`, `is_default`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (101, 2, '菜单按钮', 'F', 'bot_config_type', NULL, 'info', 'N', '0', 'admin', '2023-11-19 23:45:01', '', NULL, NULL);
+INSERT INTO sys_dict_data (`dict_code`, `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`, `list_class`, `is_default`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (102, 3, '文本', 'T', 'bot_config_type', NULL, 'info', 'N', '0', 'admin', '2023-11-19 23:45:18', '', NULL, NULL);
+INSERT INTO sys_dict_data (`dict_code`, `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`, `list_class`, `is_default`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (103, 4, '图片', 'I', 'bot_config_type', NULL, 'info', 'N', '0', 'admin', '2023-11-19 23:45:34', '', NULL, NULL);
+INSERT INTO sys_dict_data (`dict_code`, `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`, `list_class`, `is_default`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (104, 5, '视频', 'V', 'bot_config_type', NULL, 'info', 'N', '0', 'admin', '2023-11-19 23:45:55', '', NULL, NULL);
+INSERT INTO sys_dict_data (`dict_code`, `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`, `list_class`, `is_default`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (105, 6, '自定义', 'D', 'bot_config_type', NULL, 'info', 'N', '0', 'admin', '2023-11-19 23:46:12', '', NULL, NULL);
+INSERT INTO sys_dict_data (`dict_code`, `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`, `list_class`, `is_default`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (106, 1, '链接', 'URL', 'bot_trigger_type', NULL, 'success', 'N', '0', 'admin', '2023-11-19 23:46:39', '', NULL, NULL);
+INSERT INTO sys_dict_data (`dict_code`, `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`, `list_class`, `is_default`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (107, 2, '图+文', 'CALLBACK_IMG', 'bot_trigger_type', NULL, 'success', 'Y', '0', 'admin', '2023-11-19 23:47:00', '', NULL, NULL);
+INSERT INTO sys_dict_data (`dict_code`, `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`, `list_class`, `is_default`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (108, 3, '视+文', 'CALLBACK_VIDEO', 'bot_trigger_type', NULL, 'success', 'N', '0', 'admin', '2023-11-19 23:47:21', '', NULL, NULL);
+
+INSERT INTO `sys_dict_type` (`dict_id`, `dict_name`, `dict_type`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (102, '支付状态', 'pay_status', '0', 'admin', '2023-11-25 00:56:08', '', NULL, NULL);
+INSERT INTO `sys_dict_type` (`dict_id`, `dict_name`, `dict_type`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (103, '下发状态', 'pay_out_status', '0', 'admin', '2023-11-25 00:56:31', '', NULL, NULL);
+
+INSERT INTO `sys_dict_data` (`dict_code`, `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`, `list_class`, `is_default`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (109, 1, '待支付', '1', 'pay_status', NULL, 'warning', 'Y', '0', 'admin', '2023-11-25 00:57:09', '', NULL, NULL);
+INSERT INTO `sys_dict_data` (`dict_code`, `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`, `list_class`, `is_default`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (110, 2, '成功', '0', 'pay_status', '', 'primary', 'Y', '0', 'admin', '2023-11-25 00:57:28', 'admin', '2023-11-25 00:57:44', '');
+INSERT INTO `sys_dict_data` (`dict_code`, `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`, `list_class`, `is_default`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (111, 1, '待下发', '1', 'pay_out_status', NULL, 'warning', 'Y', '0', 'admin', '2023-11-25 00:58:18', '', NULL, NULL);
+INSERT INTO `sys_dict_data` (`dict_code`, `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`, `list_class`, `is_default`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (112, 2, '审核中', '2', 'pay_out_status', NULL, 'success', 'Y', '0', 'admin', '2023-11-25 00:58:55', '', NULL, NULL);
+INSERT INTO `sys_dict_data` (`dict_code`, `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`, `list_class`, `is_default`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (113, 3, '下发成功', '3', 'pay_out_status', NULL, 'primary', 'Y', '0', 'admin', '2023-11-25 00:59:22', '', NULL, NULL);
+INSERT INTO `sys_dict_data` (`dict_code`, `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`, `list_class`, `is_default`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (114, 4, '审核失败', '4', 'pay_out_status', NULL, 'danger', 'Y', '0', 'admin', '2023-11-25 01:00:02', '', NULL, NULL);
+INSERT INTO `sys_dict_data` (`dict_code`, `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`, `list_class`, `is_default`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (115, 3, '支付失败', '2', 'pay_status', NULL, 'danger', 'Y', '0', 'admin', '2023-11-25 21:54:16', '', NULL, NULL);
+INSERT INTO `sys_config` (`config_id`, `config_name`, `config_key`, `config_value`, `config_type`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (100, '链上记录缓存数据', 'online.record', '💰 当前下发记录\n------------\n2023-11-21 | 11:28:48 | 💰 金额:0.00\n2023-11-21 | 11:02:00 | 💰 金额:0.00\n2023-11-21 | 11:00:48 | 💰 金额:0.00\n2023-11-21 | 11:00:24 | 💰 金额:0.00\n2023-11-21 | 10:59:57 | 💰 金额:0.00\n2023-11-21 | 10:58:57 | 💰 金额:0.00\n2023-11-21 | 10:58:06 | 💰 金额:0.00\n2023-11-21 | 10:57:12 | 💰 金额:0.00\n2023-11-21 | 10:55:09 | 💰 金额:0.00\n2023-11-21 | 10:53:36 | 💰 金额:0.00\n------------\n', 'Y', 'admin', '2023-11-24 00:37:30', '', '2023-11-24 00:48:14', NULL);
+INSERT INTO `sys_config` (`config_id`, `config_name`, `config_key`, `config_value`, `config_type`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (101, '链上记录api地址', 'online.api.url', 'https://apilist.tronscanapi.com/api/new/filter/trc20/transfers?limit=20&start=0&sort=-timestamp&count=true&fromAddress=YOUR_TRC20_ADDRESS&filterTokenValue=0&relatedAddress=YOUR_TRC20_ADDRESS', 'Y', 'admin', '2023-11-24 03:15:41', 'admin', '2023-11-24 03:16:04', '');
+INSERT INTO `sys_config` (`config_id`, `config_name`, `config_key`, `config_value`, `config_type`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (102, 'api接口认证token', 'api.auth.token', 'YOUR_API_AUTH_TOKEN', 'Y', 'admin', '2023-11-26 01:34:19', '', NULL, NULL);
+INSERT INTO `sys_config` (`config_id`, `config_name`, `config_key`, `config_value`, `config_type`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (103, '创建交易接口', 'create.order.api', 'http://your-payment-gateway.example.com/api/v1/order/create-transaction', 'Y', 'admin', '2023-11-26 01:38:59', '', NULL, NULL);
+INSERT INTO `sys_config` (`config_id`, `config_name`, `config_key`, `config_value`, `config_type`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (104, '异步回调地址', 'notify.url', 'http://localhost:8088/index', 'Y', 'admin', '2023-11-26 01:42:04', '', NULL, NULL);
+
+-- 一级菜单
+insert into sys_menu values('4', '机器人管理', '0', '1', '#',                '',          'M', '0', '1', '', 'fa fa-paper-plane-o', 'admin', sysdate(), '', null, '机器人管理目录');
+insert into sys_menu values('5', '客户管理', '0', '1', '#',                '',          'M', '0', '1', '', 'fa fa-users', 'admin', sysdate(), '', null, '客户管理目录');
+insert into sys_menu values('6', '汇率管理', '0', '1', '#',                '',          'M', '0', '1', '', 'fa fa-balance-scale', 'admin', sysdate(), '', null, '汇率管理目录');
+insert into sys_menu values('7', '支付管理', '0', '1', '#',                '',          'M', '0', '1', '', 'fa fa-money', 'admin', sysdate(), '', null, '支付管理目录');
+insert into sys_menu values('8', '通知管理', '0', '1', '#',                '',          'M', '0', '1', '', 'fa fa-volume-up', 'admin', sysdate(), '', null, '通知管理目录');
+
+-- 二级菜单
+-- 菜单 SQL
+insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('机器人配置', '4', '2', '/bot/config', 'C', '0', 'bot:config:view', '#', 'admin', sysdate(), '', null, '机器人配置菜单');
+
+-- 按钮父菜单ID
+SELECT @parentId := LAST_INSERT_ID();
+
+-- 按钮 SQL
+insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('机器人配置查询', @parentId, '1',  '#',  'F', '0', 'bot:config:list',         '#', 'admin', sysdate(), '', null, '');
+
+insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('机器人配置新增', @parentId, '2',  '#',  'F', '0', 'bot:config:add',          '#', 'admin', sysdate(), '', null, '');
+
+insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('机器人配置修改', @parentId, '3',  '#',  'F', '0', 'bot:config:edit',         '#', 'admin', sysdate(), '', null, '');
+
+insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('机器人配置删除', @parentId, '4',  '#',  'F', '0', 'bot:config:remove',       '#', 'admin', sysdate(), '', null, '');
+
+-- insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
+-- values('机器人配置导出', @parentId, '5',  '#',  'F', '0', 'bot:config:export',       '#', 'admin', sysdate(), '', null, '');
+
+-- 菜单 SQL
+insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('机器人列表', '4', '1', '/bot/list', 'C', '0', 'bot:list:view', '#', 'admin', sysdate(), '', null, '机器人列表菜单');
+
+-- 按钮父菜单ID
+SELECT @parentId := LAST_INSERT_ID();
+
+-- 按钮 SQL
+insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('机器人列表查询', @parentId, '1',  '#',  'F', '0', 'bot:list:list',         '#', 'admin', sysdate(), '', null, '');
+
+insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('机器人列表新增', @parentId, '2',  '#',  'F', '0', 'bot:list:add',          '#', 'admin', sysdate(), '', null, '');
+
+insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('机器人列表修改', @parentId, '3',  '#',  'F', '0', 'bot:list:edit',         '#', 'admin', sysdate(), '', null, '');
+
+insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('机器人列表删除', @parentId, '4',  '#',  'F', '0', 'bot:list:remove',       '#', 'admin', sysdate(), '', null, '');
+
+insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('机器人列表导出', @parentId, '5',  '#',  'F', '0', 'bot:list:export',       '#', 'admin', sysdate(), '', null, '');
+
+
+-- 菜单 SQL
+insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('客户列表', '5', '1', '/bot/user', 'C', '0', 'bot:user:view', '#', 'admin', sysdate(), '', null, '客户列表菜单');
+
+-- 按钮父菜单ID
+SELECT @parentId := LAST_INSERT_ID();
+
+-- 按钮 SQL
+insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('客户列表查询', @parentId, '1',  '#',  'F', '0', 'bot:user:list',         '#', 'admin', sysdate(), '', null, '');
+
+insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('客户列表删除', @parentId, '4',  '#',  'F', '0', 'bot:user:remove',       '#', 'admin', sysdate(), '', null, '');
+
+insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('客户列表导出', @parentId, '5',  '#',  'F', '0', 'bot:user:export',       '#', 'admin', sysdate(), '', null, '');
+
+
+-- 菜单 SQL
+insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('汇率管理', '6', '1', '/bot/rate', 'C', '0', 'bot:rate:view', '#', 'admin', sysdate(), '', null, '汇率管理菜单');
+
+-- 按钮父菜单ID
+SELECT @parentId := LAST_INSERT_ID();
+
+-- 按钮 SQL
+insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('汇率管理查询', @parentId, '1',  '#',  'F', '0', 'bot:rate:list',         '#', 'admin', sysdate(), '', null, '');
+
+insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('汇率管理新增', @parentId, '2',  '#',  'F', '0', 'bot:rate:add',          '#', 'admin', sysdate(), '', null, '');
+
+insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('汇率管理修改', @parentId, '3',  '#',  'F', '0', 'bot:rate:edit',         '#', 'admin', sysdate(), '', null, '');
+
+insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('汇率管理删除', @parentId, '4',  '#',  'F', '0', 'bot:rate:remove',       '#', 'admin', sysdate(), '', null, '');
+
+insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('汇率管理导出', @parentId, '5',  '#',  'F', '0', 'bot:rate:export',       '#', 'admin', sysdate(), '', null, '');
+
+
+-- 菜单 SQL
+insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('支付记录', '7', '1', '/bot/pay', 'C', '0', 'bot:pay:view', '#', 'admin', sysdate(), '', null, '支付记录菜单');
+
+-- 按钮父菜单ID
+SELECT @parentId := LAST_INSERT_ID();
+
+-- 按钮 SQL
+insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('支付记录查询', @parentId, '1',  '#',  'F', '0', 'bot:pay:list',         '#', 'admin', sysdate(), '', null, '');
+
+insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('支付记录导出', @parentId, '5',  '#',  'F', '0', 'bot:pay:export',       '#', 'admin', sysdate(), '', null, '');
+
+-- 菜单 SQL
+insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('下发记录', '7', '1', '/bot/payout', 'C', '0', 'bot:payout:view', '#', 'admin', sysdate(), '', null, '下发记录菜单');
+
+-- 按钮父菜单ID
+SELECT @parentId := LAST_INSERT_ID();
+
+-- 按钮 SQL
+insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('下发记录查询', @parentId, '1',  '#',  'F', '0', 'bot:payout:list',         '#', 'admin', sysdate(), '', null, '');
+
+insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('下发记录导出', @parentId, '5',  '#',  'F', '0', 'bot:payout:export',       '#', 'admin', sysdate(), '', null, '');
+
+
+-- 菜单 SQL
+insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('通知管理', '8', '1', '/bot/notify', 'C', '0', 'bot:notify:view', '#', 'admin', sysdate(), '', null, '通知管理菜单');
+
+-- 按钮父菜单ID
+SELECT @parentId := LAST_INSERT_ID();
+
+-- 按钮 SQL
+insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('通知管理查询', @parentId, '1',  '#',  'F', '0', 'bot:notify:list',         '#', 'admin', sysdate(), '', null, '');
+
+insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('通知管理新增', @parentId, '2',  '#',  'F', '0', 'bot:notify:add',          '#', 'admin', sysdate(), '', null, '');
+
+insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('通知管理删除', @parentId, '4',  '#',  'F', '0', 'bot:notify:remove',       '#', 'admin', sysdate(), '', null, '');
+
+insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('通知管理导出', @parentId, '5',  '#',  'F', '0', 'bot:notify:export',       '#', 'admin', sysdate(), '', null, '');
+
+
+-- ----------------------------
+-- 21、机器人列表
+-- ----------------------------
+drop table if exists bot_list;
+create table bot_list (
+                            bot_id            int(4)          not null auto_increment    comment '机器人ID',
+                            bot_user_name     varchar(50)     not null                   comment '机器人用户名',
+                            bot_token         varchar(100)    not null                   comment '机器人TOKEN',
+                            status            char(1)         default '1'                comment '机器人状态（0正常 1关闭）',
+                            create_by         varchar(64)     default ''                 comment '创建者',
+                            create_time       datetime                                   comment '创建时间',
+                            update_by         varchar(64)     default ''                 comment '更新者',
+                            update_time       datetime                                   comment '更新时间',
+                            remark            varchar(255)    default null               comment '备注',
+                            primary key (bot_id),
+                            unique (bot_token)
+) engine=innodb auto_increment=10 comment = '机器人列表';
+
+INSERT INTO `bot_list` (`bot_id`, `bot_user_name`, `bot_token`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (10, 'grabRedPackBot', 'YOUR_BOT_TOKEN_FROM_BOTFATHER', '0', '', '2023-11-21 23:18:14', 'admin', '2023-11-22 00:42:58', '');
+
+
+-- ----------------------------
+-- 22、机器人配置
+-- ----------------------------
+drop table if exists bot_config;
+create table bot_config (
+                          config_id         bigint(20)      not null auto_increment    comment '配置ID',
+                          config_name       varchar(50)     default ''                 comment '配置名称',
+                          show_name         varchar(50)     default ''                 comment '按钮显示名称',
+                          config_type       char(1)         not null                   comment '配置类型（B普通按钮 F菜单按钮 T文本 I图片 V视频 D自定义）',
+                          parent_id         bigint(20)      default 0                  comment '父配置ID',
+                          order_num         int(4)          default 0                  comment '显示顺序',
+                          url               varchar(1024)    default ''                comment '自定义请求地址',
+                          image             varchar(200)    default ''                comment '自定义图片',
+                          video             varchar(200)    default ''                comment '自定义视频',
+                          text              varchar(1024)   default ''                 comment '自定义文字',
+                          trigger_type      varchar(50)     default ''                 comment '触发方式（URL打开指定链接 CALLBACK_IMG发送指定图片+文字 CALLBACK_VIDEO发送指定视频+文字）',
+                          callback_data     varchar(50)     default ''                 comment '按下按钮时要在回调查询中发送到bot的数据',
+                          callback_text     varchar(100)    default ''                 comment '发送信息时要在回调查询中发送到bot的数据',
+                          visible           char(1)         default 0                  comment '配置状态（0显示 1隐藏）',
+                          create_by         varchar(64)     default ''                 comment '创建者',
+                          create_time       datetime                                   comment '创建时间',
+                          update_by         varchar(64)     default ''                 comment '更新者',
+                          update_time       datetime                                   comment '更新时间',
+                          remark            varchar(500)    default ''                 comment '备注',
+                          primary key (config_id)
+) engine=innodb auto_increment=2000 comment = '机器人配置';
+
+
+INSERT INTO `bot_config` (`config_id`, `config_name`, `show_name`, `config_type`, `parent_id`, `order_num`, `url`, `image`, `video`, `text`, `trigger_type`, `callback_data`, `callback_text`, `visible`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2003, '实时汇率', '实时汇率', 'F', 0, 1, '', '', '', '', 'CALLBACK_IMG', '', '/rate', '0', '', '2023-11-20 23:25:00', 'admin', '2023-11-26 07:01:15', '此按钮特殊处理，抓取实时汇率');
+INSERT INTO `bot_config` (`config_id`, `config_name`, `show_name`, `config_type`, `parent_id`, `order_num`, `url`, `image`, `video`, `text`, `trigger_type`, `callback_data`, `callback_text`, `visible`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2004, '在线购买', '在线购买', 'F', 0, 2, '', '', '', '', 'CALLBACK_IMG', '', '/to_buy', '0', '', '2023-11-20 23:41:00', 'admin', '2023-11-26 07:01:41', '');
+INSERT INTO `bot_config` (`config_id`, `config_name`, `show_name`, `config_type`, `parent_id`, `order_num`, `url`, `image`, `video`, `text`, `trigger_type`, `callback_data`, `callback_text`, `visible`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2005, '我的订单', '我的订单', 'F', 0, 3, '', '', '', '', 'CALLBACK_IMG', '', '/order', '0', '', '2023-11-20 23:42:25', 'admin', '2023-11-26 07:01:51', '此按钮特殊处理，查询用户订单');
+INSERT INTO `bot_config` (`config_id`, `config_name`, `show_name`, `config_type`, `parent_id`, `order_num`, `url`, `image`, `video`, `text`, `trigger_type`, `callback_data`, `callback_text`, `visible`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2006, '人工客服', '人工客服', 'F', 0, 4, '', '', '', '', 'CALLBACK_IMG', '', '/service', '0', '', '2023-11-20 23:44:05', 'admin', '2023-11-26 07:02:04', '');
+INSERT INTO `bot_config` (`config_id`, `config_name`, `show_name`, `config_type`, `parent_id`, `order_num`, `url`, `image`, `video`, `text`, `trigger_type`, `callback_data`, `callback_text`, `visible`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2007, '代理中心', '代理中心', 'F', 0, 5, '', '', '', '', 'CALLBACK_IMG', '', '/agent', '0', '', '2023-11-20 23:44:41', 'admin', '2023-11-26 07:02:12', '');
+INSERT INTO `bot_config` (`config_id`, `config_name`, `show_name`, `config_type`, `parent_id`, `order_num`, `url`, `image`, `video`, `text`, `trigger_type`, `callback_data`, `callback_text`, `visible`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2008, '个人中心', '个人中心', 'F', 0, 6, '', '', '', '', 'CALLBACK_IMG', '', '/mine', '0', '', '2023-11-20 23:45:20', 'admin', '2023-11-26 07:02:19', '');
+INSERT INTO `bot_config` (`config_id`, `config_name`, `show_name`, `config_type`, `parent_id`, `order_num`, `url`, `image`, `video`, `text`, `trigger_type`, `callback_data`, `callback_text`, `visible`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2009, '实时汇率图片', '', 'I', 2003, 1, '', '/profile/upload/2023/11/23/home_20231123005339A001.jpg', '', '', 'undefined', '', '', '0', '', '2023-11-21 21:50:36', 'admin', '2023-11-24 02:33:47', '');
+INSERT INTO `bot_config` (`config_id`, `config_name`, `show_name`, `config_type`, `parent_id`, `order_num`, `url`, `image`, `video`, `text`, `trigger_type`, `callback_data`, `callback_text`, `visible`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2010, '购买估价', '购买估价', 'B', 2003, 3, '', '', '', '', 'CALLBACK_IMG', '/valuation', '', '0', '', '2023-11-21 21:55:00', '', '2023-11-21 22:12:04', '此按钮特殊处理，获取估价信息');
+INSERT INTO `bot_config` (`config_id`, `config_name`, `show_name`, `config_type`, `parent_id`, `order_num`, `url`, `image`, `video`, `text`, `trigger_type`, `callback_data`, `callback_text`, `visible`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2011, '购买估价文本', '', 'T', 2010, 1, '', '', '', '自定义文本\r\n请输入您要购买的数量', 'undefined', '', '', '0', '', '2023-11-21 21:56:44', '', '2023-11-21 22:03:18', '');
+INSERT INTO `bot_config` (`config_id`, `config_name`, `show_name`, `config_type`, `parent_id`, `order_num`, `url`, `image`, `video`, `text`, `trigger_type`, `callback_data`, `callback_text`, `visible`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2012, '实时汇率文本', '', 'T', 2003, 2, '', '', '', '💰 当前下发记录\r\n------------\r\n{record}\r\n------------\r\n实时汇率自定义文本\r\n实时汇率自定义文本\r\n实时汇率自定义文本', 'undefined', '', '', '0', '', '2023-11-21 22:05:04', 'admin', '2023-11-24 22:49:41', '{record} 链上下发记录');
+INSERT INTO `bot_config` (`config_id`, `config_name`, `show_name`, `config_type`, `parent_id`, `order_num`, `url`, `image`, `video`, `text`, `trigger_type`, `callback_data`, `callback_text`, `visible`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2013, '在线购买图片', '', 'I', 2004, 1, '', '/profile/upload/2023/11/21/home_20231121221309A001.jpg', '', '', 'undefined', '', '', '0', '', '2023-11-21 22:13:09', '', NULL, '');
+INSERT INTO `bot_config` (`config_id`, `config_name`, `show_name`, `config_type`, `parent_id`, `order_num`, `url`, `image`, `video`, `text`, `trigger_type`, `callback_data`, `callback_text`, `visible`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2014, '在线购买文本', '', 'T', 2004, 2, '', '', '', '在线购买自定义文本\r\n在线购买自定义文本\r\n在线购买自定义文本', 'undefined', '', '', '0', '', '2023-11-21 22:14:14', '', NULL, '');
+INSERT INTO `bot_config` (`config_id`, `config_name`, `show_name`, `config_type`, `parent_id`, `order_num`, `url`, `image`, `video`, `text`, `trigger_type`, `callback_data`, `callback_text`, `visible`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2015, '点击购买', '点击购买', 'B', 2004, 3, '', '', '', '', 'CALLBACK_IMG', '/buy', '', '0', '', '2023-11-21 22:16:45', 'admin', '2023-11-24 02:35:50', '');
+INSERT INTO `bot_config` (`config_id`, `config_name`, `show_name`, `config_type`, `parent_id`, `order_num`, `url`, `image`, `video`, `text`, `trigger_type`, `callback_data`, `callback_text`, `visible`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2016, '点击购买文本', '', 'T', 2015, 1, '', '', '', '点击购买自定义文本\r\n点击购买自定义文本\r\n点击购买自定义文本', 'undefined', '', '', '0', '', '2023-11-21 22:17:52', 'admin', '2023-11-26 06:46:21', '此按钮特殊处理，与用户进行购买交互');
+INSERT INTO `bot_config` (`config_id`, `config_name`, `show_name`, `config_type`, `parent_id`, `order_num`, `url`, `image`, `video`, `text`, `trigger_type`, `callback_data`, `callback_text`, `visible`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2017, '我的订单图片', '', 'I', 2005, 1, '', '/profile/upload/2023/11/21/home_20231121223256A002.jpg', '', '', 'undefined', '', '', '0', '', '2023-11-21 22:32:56', '', NULL, '');
+INSERT INTO `bot_config` (`config_id`, `config_name`, `show_name`, `config_type`, `parent_id`, `order_num`, `url`, `image`, `video`, `text`, `trigger_type`, `callback_data`, `callback_text`, `visible`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2019, '人工客服图片', '', 'I', 2006, 1, '', '/profile/upload/2023/11/21/home_20231121223637A003.jpg', '', '', 'undefined', '', '', '0', '', '2023-11-21 22:36:38', '', NULL, '');
+INSERT INTO `bot_config` (`config_id`, `config_name`, `show_name`, `config_type`, `parent_id`, `order_num`, `url`, `image`, `video`, `text`, `trigger_type`, `callback_data`, `callback_text`, `visible`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2020, '人工客服文本', '', 'T', 2006, 2, '', '', '', '人工客服自定义文本\r\n人工客服自定义文本\r\n人工客服自定义文本', 'undefined', '', '', '0', '', '2023-11-21 22:37:27', '', NULL, '');
+INSERT INTO `bot_config` (`config_id`, `config_name`, `show_name`, `config_type`, `parent_id`, `order_num`, `url`, `image`, `video`, `text`, `trigger_type`, `callback_data`, `callback_text`, `visible`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2021, '联系客服', '联系客服', 'B', 2006, 3, 'https://t.me/YOUR_SUPPORT_ACCOUNT', '', '', '', 'URL', '/kefu', '', '0', '', '2023-11-21 22:41:49', 'admin', '2023-11-23 20:40:33', '');
+INSERT INTO `bot_config` (`config_id`, `config_name`, `show_name`, `config_type`, `parent_id`, `order_num`, `url`, `image`, `video`, `text`, `trigger_type`, `callback_data`, `callback_text`, `visible`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2022, '官方群组', '官方群组', 'B', 2006, 4, 'https://t.me/YOUR_GROUP_LINK', '', '', '', 'URL', '/group', '', '0', '', '2023-11-21 22:42:23', 'admin', '2023-11-23 20:41:06', '');
+INSERT INTO `bot_config` (`config_id`, `config_name`, `show_name`, `config_type`, `parent_id`, `order_num`, `url`, `image`, `video`, `text`, `trigger_type`, `callback_data`, `callback_text`, `visible`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2023, '代理中心图片', '', 'I', 2007, 1, '', '/profile/upload/2023/11/21/home_20231121225026A004.jpg', '', '', 'undefined', '', '', '0', '', '2023-11-21 22:50:27', '', NULL, '');
+INSERT INTO `bot_config` (`config_id`, `config_name`, `show_name`, `config_type`, `parent_id`, `order_num`, `url`, `image`, `video`, `text`, `trigger_type`, `callback_data`, `callback_text`, `visible`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2024, '代理中心文本', '', 'T', 2007, 2, '', '', '', '代理中心自定义文本\r\n代理中心自定义文本\r\n代理中心自定义文本', 'undefined', '', '', '0', '', '2023-11-21 22:51:04', '', NULL, '');
+INSERT INTO `bot_config` (`config_id`, `config_name`, `show_name`, `config_type`, `parent_id`, `order_num`, `url`, `image`, `video`, `text`, `trigger_type`, `callback_data`, `callback_text`, `visible`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2025, '按钮1', '按钮1', 'B', 2007, 3, '', '', '', '', 'CALLBACK_IMG', '/button1', '', '0', '', '2023-11-21 22:51:34', '', NULL, '');
+INSERT INTO `bot_config` (`config_id`, `config_name`, `show_name`, `config_type`, `parent_id`, `order_num`, `url`, `image`, `video`, `text`, `trigger_type`, `callback_data`, `callback_text`, `visible`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2026, '按钮2', '按钮2', 'B', 2007, 4, '', '', '', '', 'CALLBACK_IMG', '/button2', '', '0', '', '2023-11-21 22:51:55', '', '2023-11-21 22:52:07', '');
+INSERT INTO `bot_config` (`config_id`, `config_name`, `show_name`, `config_type`, `parent_id`, `order_num`, `url`, `image`, `video`, `text`, `trigger_type`, `callback_data`, `callback_text`, `visible`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2027, '个人中心图片', '', 'I', 2008, 1, '', '/profile/upload/2023/11/21/home_20231121225239A005.jpg', '', '', 'undefined', '', '', '0', '', '2023-11-21 22:52:39', '', NULL, '');
+INSERT INTO `bot_config` (`config_id`, `config_name`, `show_name`, `config_type`, `parent_id`, `order_num`, `url`, `image`, `video`, `text`, `trigger_type`, `callback_data`, `callback_text`, `visible`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2028, '个人中心文本', '', 'T', 2008, 2, '', '', '', '💎个人中心\r\n\r\n飞机名：{nickname}\r\n用户名：{username}\r\n用户ID：{user_id}\r\n\r\n个人中心自定义文本\r\n个人中心自定义文本\r\n个人中心自定义文本\r\n\r\n` ydahdahdashjksahfjsahfjkahf `', 'undefined', '', '', '0', '', '2023-11-21 22:53:03', 'admin', '2023-11-24 04:06:53', '');
+INSERT INTO `bot_config` (`config_id`, `config_name`, `show_name`, `config_type`, `parent_id`, `order_num`, `url`, `image`, `video`, `text`, `trigger_type`, `callback_data`, `callback_text`, `visible`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2030, '开始', '', 'D', 0, 7, '', '', '', '', 'CALLBACK_VIDEO', '', '/start', '0', 'admin', '2023-11-23 20:47:43', 'admin', '2023-11-23 20:50:30', '用户发送/start触发，仅能设置文本/图片/视频，设置按钮不生效');
+INSERT INTO `bot_config` (`config_id`, `config_name`, `show_name`, `config_type`, `parent_id`, `order_num`, `url`, `image`, `video`, `text`, `trigger_type`, `callback_data`, `callback_text`, `visible`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2031, '开始自定义文本', '', 'T', 2030, 1, '', '', '', '开始自定义文本\r\n开始自定义文本\r\n开始自定义文本', 'undefined', '', '', '0', 'admin', '2023-11-23 20:48:10', '', NULL, '');
+INSERT INTO `bot_config` (`config_id`, `config_name`, `show_name`, `config_type`, `parent_id`, `order_num`, `url`, `image`, `video`, `text`, `trigger_type`, `callback_data`, `callback_text`, `visible`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2032, '开始自定义视频', '', 'V', 2030, 2, '', '', '/profile/upload/2023/11/23/v_20231123205018A001.mp4', '', 'undefined', '', '', '0', 'admin', '2023-11-23 20:50:18', 'admin', '2023-11-24 02:34:24', '');
+INSERT INTO `bot_config` (`config_id`, `config_name`, `show_name`, `config_type`, `parent_id`, `order_num`, `url`, `image`, `video`, `text`, `trigger_type`, `callback_data`, `callback_text`, `visible`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2033, '我的订单文本', '', 'T', 2005, 2, '', '', '', '我的订单自定义文本\r\n我的订单自定义文本\r\n我的订单自定义文本', 'undefined', '', '', '0', 'admin', '2023-11-24 01:10:45', '', NULL, '');
+INSERT INTO `bot_config` (`config_id`, `config_name`, `show_name`, `config_type`, `parent_id`, `order_num`, `url`, `image`, `video`, `text`, `trigger_type`, `callback_data`, `callback_text`, `visible`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2036, '支付信息', '', 'D', 0, 8, '', '', '', '', 'CALLBACK_IMG', '', '/pay_info', '0', 'admin', '2023-11-24 21:40:35', 'admin', '2023-11-24 21:55:21', '');
+INSERT INTO `bot_config` (`config_id`, `config_name`, `show_name`, `config_type`, `parent_id`, `order_num`, `url`, `image`, `video`, `text`, `trigger_type`, `callback_data`, `callback_text`, `visible`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2037, '支付信息文本', '', 'T', 2036, 2, '', '', '', '订单编号：{order_id}\r\n\r\n购买金额：{amount}\r\n当前汇率：{rate}\r\n您会收到：{receive}\r\n您的接收地址：\r\n`{receive_address}`\r\n➖➖➖➖➖➖➖➖➖➖➖➖\r\n支付金额：{pay_amount}\r\n\r\n支付地址 (USDT - TRC20) \r\n`{wallet_address}`\r\n\r\n👆 点击复制 金额/地址，可重复充值!\r\n👆 上面地址和二维码不一致，请不要付款!\r\n\r\n提示：\r\n- 对上述地址👆支付后, 经过3次网络确认, 充值成功!\r\n- 请耐心等待, 支付成功后 系统会通知您!', 'CALLBACK_IMG', '', '', '0', 'admin', '2023-11-24 21:44:00', 'admin', '2023-11-26 05:11:20', '');
+INSERT INTO `bot_config` (`config_id`, `config_name`, `show_name`, `config_type`, `parent_id`, `order_num`, `url`, `image`, `video`, `text`, `trigger_type`, `callback_data`, `callback_text`, `visible`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2038, '支付信息图片', '', 'I', 2036, 1, '', '/profile/upload/2023/11/24/home_20231124214433A001.jpg', '', '', 'CALLBACK_IMG', '', '', '0', 'admin', '2023-11-24 21:44:33', '', NULL, '');
+INSERT INTO `bot_config` (`config_id`, `config_name`, `show_name`, `config_type`, `parent_id`, `order_num`, `url`, `image`, `video`, `text`, `trigger_type`, `callback_data`, `callback_text`, `visible`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2039, '取消返回', '取消返回', 'B', 2036, 3, '', '', '', '', 'CALLBACK_IMG', '/pay_cancel', '', '0', 'admin', '2023-11-24 21:46:56', 'admin', '2023-11-24 21:55:02', '');
+INSERT INTO `bot_config` (`config_id`, `config_name`, `show_name`, `config_type`, `parent_id`, `order_num`, `url`, `image`, `video`, `text`, `trigger_type`, `callback_data`, `callback_text`, `visible`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2040, '联系客服', '联系客服', 'B', 2036, 4, 'https://t.me/YOUR_SUPPORT_ACCOUNT', '', '', '', 'URL', '', '', '0', 'admin', '2023-11-24 21:47:42', 'admin', '2023-11-24 21:48:11', '');
+
+drop table if exists tg_user;
+CREATE TABLE `tg_user` (
+                           `id` int NOT NULL AUTO_INCREMENT comment 'ID',
+                           `user_id` varchar(100) NOT NULL comment '用户ID',
+                           `username` varchar(100) NOT NULL comment '用户名',
+                           `nickname` varchar(100) comment '昵称',
+                           `is_admin` varchar(1) default 'N' comment '是否管理员',
+                           `pay_count` int default 0 comment '成功交易',
+                           `pay_amount` decimal(16,2) default 0.00 comment '共支付',
+                           `payout_count` int default 0 comment '共下发',
+                           `status` varchar(1) default '0' comment '状态',
+                           `create_by` varchar(100) NOT NULL comment '创建人',
+                           `create_time` datetime NOT NULL comment '创建时间',
+                           `update_by` varchar(100)  comment '更新人',
+                           `update_time` datetime comment '更新时间',
+                           PRIMARY KEY (`id`),
+                           KEY `idx_user_id` (`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci comment = '客户管理';
+
+
+drop table if exists exchange_rate;
+CREATE TABLE `exchange_rate` (
+                                 `id` int NOT NULL AUTO_INCREMENT comment 'ID',
+                                 `min` decimal(16,2) NOT NULL comment '起始值',
+                                 `max` decimal(16,2) NOT NULL comment '结束值',
+                                 `rate` decimal(6,2) NOT NULL comment '汇率',
+                                 `create_by` varchar(100) NOT NULL comment '创建人',
+                                 `create_time` datetime NOT NULL comment '创建时间',
+                                 `update_by` varchar(100)  comment '更新人',
+                                 `update_time` datetime comment '更新时间',
+                                 PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci comment = '汇率管理';
+
+INSERT INTO `exchange_rate` (`id`, `min`, `max`, `rate`, `create_by`, `create_time`, `update_by`, `update_time`) VALUES (1, 1.00, 50.00, 8.80, 'admin', '2023-11-23 22:14:44', NULL, NULL);
+INSERT INTO `exchange_rate` (`id`, `min`, `max`, `rate`, `create_by`, `create_time`, `update_by`, `update_time`) VALUES (2, 51.00, 100.00, 8.90, 'admin', '2023-11-23 22:15:09', NULL, NULL);
+INSERT INTO `exchange_rate` (`id`, `min`, `max`, `rate`, `create_by`, `create_time`, `update_by`, `update_time`) VALUES (3, 101.00, 200.00, 9.10, 'admin', '2023-11-23 22:15:22', NULL, NULL);
+INSERT INTO `exchange_rate` (`id`, `min`, `max`, `rate`, `create_by`, `create_time`, `update_by`, `update_time`) VALUES (4, 201.00, 10000.00, 9.30, 'admin', '2023-11-23 22:15:34', NULL, NULL);
+
+
+drop table if exists payment_record;
+CREATE TABLE `payment_record` (
+                                 `id` int NOT NULL AUTO_INCREMENT comment 'ID',
+                                 `order_id` varchar(100) NOT NULL comment '订单编号',
+                                 `user_id` varchar(100) NOT NULL comment '电报ID',
+                                 `username` varchar(100) NOT NULL comment '用户名',
+                                 `nickname` varchar(100) comment '网名',
+                                 `amount` decimal(16,2) NOT NULL comment '支付金额',
+                                 `actual_amount` decimal(16,2) NOT NULL comment '实际支付金额',
+                                 `status` varchar(1) default '1' comment '支付状态',
+                                 `address` varchar(100) comment '下发地址',
+                                 `block_id` varchar(200) comment '区块交易id',
+                                 `create_by` varchar(100) NOT NULL comment '创建人',
+                                 `create_time` datetime NOT NULL comment '创建时间',
+                                 `update_by` varchar(100)  comment '更新人',
+                                 `update_time` datetime comment '更新时间',
+                                 PRIMARY KEY (`id`),
+                                 unique (order_id)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci comment = '支付记录表';
+
+
+drop table if exists payout_record;
+CREATE TABLE `payout_record` (
+                                  `id` int NOT NULL AUTO_INCREMENT comment 'ID',
+                                  `order_id` varchar(100) NOT NULL comment '订单编号',
+                                  `user_id` varchar(100) NOT NULL comment '电报ID',
+                                  `username` varchar(100) NOT NULL comment '用户名',
+                                  `nickname` varchar(100) comment '网名',
+                                  `amount` decimal(16,2) NOT NULL comment '支付金额',
+                                  `actual_amount` decimal(16,2) NOT NULL comment '实际支付金额',
+                                  `status` varchar(1) default '1' comment '支付状态',
+                                  `pay_amount` decimal(16,2) NOT NULL comment '应下发',
+                                  `p_status` varchar(1) default '1' comment '下发状态',
+                                  `address` varchar(100) comment '下发地址',
+                                  `hash` varchar(200) comment '交易哈希',
+                                  `remark` varchar(500) comment '备注',
+                                  `create_by` varchar(100) NOT NULL comment '创建人',
+                                  `create_time` datetime NOT NULL comment '创建时间',
+                                  `update_by` varchar(100)  comment '更新人',
+                                  `update_time` datetime comment '更新时间',
+                                  PRIMARY KEY (`id`),
+                                  unique (order_id)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci comment = '下发记录表';
+
+alter table payment_record add column `block_id` varchar(200) comment '区块交易id';
+alter table payment_record add column `expiration_time` datetime comment '过期时间';
+alter table tg_user modify column `payout_count` decimal(16,2) default 0.00 comment '共下发';
+alter table tg_user add column `remark` varchar(500) comment '备注';
+
+
+
+drop table if exists user_notify;
+CREATE TABLE `user_notify` (
+                               `id` int NOT NULL AUTO_INCREMENT comment 'ID',
+                               `notify_type` varchar(1) NOT NULL comment '通知类型',
+                               `user_id` varchar(2048) default '' comment '用户ID',
+                               `image`   varchar(200)    default ''  comment '通知图片',
+                               `text`    varchar(1024)   default ''  comment '通知内容',
+                               `status`  varchar(1) default '2' comment '状态',
+                               `create_by` varchar(100) NOT NULL comment '创建人',
+                               `create_time` datetime NOT NULL comment '创建时间',
+                               `update_by` varchar(100)  comment '更新人',
+                               `update_time` datetime comment '更新时间',
+                               PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci comment = '通知管理';

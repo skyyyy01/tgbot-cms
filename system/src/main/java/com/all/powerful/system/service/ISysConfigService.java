@@ -18,6 +18,7 @@ public interface ISysConfigService
      */
     public SysConfig selectConfigById(Long configId);
 
+    public SysConfig selectConfigByConfigKey(String configKey);
     /**
      * 根据键名查询参数配置信息
      *

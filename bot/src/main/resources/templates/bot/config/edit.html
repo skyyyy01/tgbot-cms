@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改机器人配置')" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-config-edit" th:object="${config}">
+            <input id="configId" name="configId" th:field="*{configId}" type="hidden">
+            <input id="treeId" name="parentId" type="hidden" th:field="*{parentId}" />
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">配置类型：</label>
+                <div class="col-sm-8">
+                    <label class="radio-box"> <input type="radio" th:field="*{configType}" name="configType" value="B" checked/> 普通按钮 </label>
+                    <label class="radio-box"> <input type="radio" th:field="*{configType}" name="configType" value="F" /> 菜单按钮 </label>
+                    <label class="radio-box"> <input type="radio" th:field="*{configType}" name="configType" value="T" /> 文本 </label>
+                    <label class="radio-box"> <input type="radio" th:field="*{configType}" name="configType" value="I" /> 图片 </label>
+                    <label class="radio-box"> <input type="radio" th:field="*{configType}" name="configType" value="V" /> 视频 </label>
+                    <label class="radio-box"> <input type="radio" th:field="*{configType}" name="configType" value="D" /> 自定义 </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">配置名称：</label>
+                <div class="col-sm-8">
+                    <input id="configName" name="configName" th:field="*{configName}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">按钮显示名称：</label>
+                <div class="col-sm-8">
+                    <input id="showName" name="showName" th:field="*{showName}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">父配置ID：</label>
+                <div class="col-sm-8">
+                    <div class="input-group">
+                        <input class="form-control" type="text" onclick="selectConfigTree()" id="treeName" readonly="true" th:value="${config.parentName == null ? '无' : config.parentName}">
+                        <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">显示顺序：</label>
+                <div class="col-sm-8">
+                    <input name="orderNum" th:field="*{orderNum}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">自定义请求地址：</label>
+                <div class="col-sm-8">
+                    <input id="url" name="url" th:field="*{url}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">自定义图片：</label>
+                <div class="col-sm-8">
+                    <input id="imgValue" th:value="@{${config.image}}" class="form-control" type="text" readonly="true">
+<!--                    <img width="100px" height="100px" id="avatar" th:src="(${#strings.isEmpty(config.image)}) ? @{/img/profile.jpg} : @{${config.image}}" th:onerror="'this.src=\'' + @{'/img/profile.jpg'} + '\''">-->
+                    <div class="file-loading">
+                        <input class="form-control file-upload" id="image" name="image" type="file" accept="image/*">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">自定义视频：</label>
+                <div class="col-sm-8">
+                    <input id="videoValue" th:value="@{${config.video}}" class="form-control" type="text" readonly="true">
+                    <div class="file-loading">
+                        <input class="form-control file-upload" id="video" name="video" type="file"  accept="video/*">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">自定义文字：</label>
+                <div class="col-sm-8">
+                    <textarea id="text" name="text" class="form-control">[[*{text}]]</textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">触发方式：</label>
+                <div id="triggerType" class="col-sm-8">
+                    <label class="radio-box"> <input type="radio" th:field="*{triggerType}" name="triggerType" value="URL" /> 打开指定链接 </label>
+                    <label class="radio-box"> <input type="radio" th:field="*{triggerType}" name="triggerType" value="CALLBACK_IMG" checked/> 发送指定图片+文字 </label>
+                    <label class="radio-box"> <input type="radio" th:field="*{triggerType}" name="triggerType" value="CALLBACK_VIDEO" /> 发送指定视频+文字 </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">按钮编码：</label>
+                <div class="col-sm-8">
+                    <input id="callbackData" name="callbackData" th:field="*{callbackData}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">文本指令：</label>
+                <div class="col-sm-8">
+                    <input id="callbackText" name="callbackText" th:field="*{callbackText}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">配置状态：</label>
+                <div class="col-sm-8">
+                    <label class="radio-box"> <input type="radio" th:field="*{visible}" name="visible" value="0" checked/> 启用 </label>
+                    <label class="radio-box"> <input type="radio" th:field="*{visible}" name="visible" value="1" /> 禁用 </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">备注：</label>
+                <div class="col-sm-8">
+                    <textarea name="remark" class="form-control">[[*{remark}]]</textarea>
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var prefix = ctx + "bot/config";
+
+        $(function() {
+            var configType = $('input[name="configType"]:checked').val();
+            configVisible(configType);
+        });
+
+        $("#form-config-edit").validate({
+            onkeyup: false,
+            rules:{
+                configType:{
+                    required:true,
+                },
+                configName:{
+                    required:true,
+                },
+                triggerType:{
+                    required: function (element) {
+                        let ct = $("input[name='configType']:checked").val()
+                        return ct === "B" || ct === "F" || ct === "D";
+                    }
+                },
+                showName:{
+                    required:function(element) {
+                        let ct = $("input[name='configType']:checked").val()
+                        return ct === "B" || ct === "F";
+                    },
+                    remote: {
+                        url: prefix + "/checkUnique",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "configType": function() {
+                                return $("input[name='configType']:checked").val();
+                            },
+                            "showName": function() {
+                                return $.common.trim($("#showName").val());
+                            },
+                            "callbackData": function() {
+                                return $.common.trim($("#callbackData").val());
+                            },
+                            "callbackText": function() {
+                                return $.common.trim($("#callbackText").val());
+                            }
+                        }
+                    }
+                },
+                callbackData:{
+                    required:function(element) {
+                        let ct = $("input[name='configType']:checked").val()
+                        let tt = $("input[name='triggerType']:checked").val()
+                        return ct === "B" && tt !== "URL";
+                    },
+                    remote: {
+                        url: prefix + "/checkUnique",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "configType": function() {
+                                return $("input[name='configType']:checked").val();
+                            },
+                            "showName": function() {
+                                return $.common.trim($("#showName").val());
+                            },
+                            "callbackData": function() {
+                                return $.common.trim($("#callbackData").val());
+                            },
+                            "callbackText": function() {
+                                return $.common.trim($("#callbackText").val());
+                            }
+                        }
+                    }
+                },
+                callbackText:{
+                    required:function(element) {
+                        let ct = $("input[name='configType']:checked").val()
+                        return ct === "D" || ct === "F";
+                    },
+                    remote: {
+                        url: prefix + "/checkUnique",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "configType": function() {
+                                return $("input[name='configType']:checked").val();
+                            },
+                            "showName": function() {
+                                return $.common.trim($("#showName").val());
+                            },
+                            "callbackData": function() {
+                                return $.common.trim($("#callbackData").val());
+                            },
+                            "callbackText": function() {
+                                return $.common.trim($("#callbackText").val());
+                            }
+                        }
+                    }
+                },
+                image:{
+                    required:function(element) {
+                        let ct = $("input[name='configType']:checked").val()
+                        let im = $("#imgValue").val()
+                        return ct === "I" && !im;
+                    }
+                },
+                video:{
+                    required:function(element) {
+                        let ct = $("input[name='configType']:checked").val()
+                        let vi = $("#videoValue").val()
+                        return ct === "V" && !vi;
+                    }
+                },
+                text:{
+                    required:function(element) {
+                        let ct = $("input[name='configType']:checked").val()
+                        return ct === "T";
+                    }
+                },
+                url:{
+                    required:function(element) {
+                        let ct = $("input[name='configType']:checked").val()
+                        let tt = $("input[name='triggerType']:checked").val()
+                        return ct === "B" && tt === "URL";
+                    }
+                },
+                orderNum:{
+                    digits:true
+                },
+            },
+            messages: {
+                "showName": {
+                    remote: "显示名称已经存在"
+                },
+                "callbackData": {
+                    remote: "按钮编码已经存在"
+                },
+                "callbackText": {
+                    remote: "文本指令已经存在"
+                }
+            },
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            // if ($.validate.form()) {
+            //     $.operate.save(prefix + "/edit", $('#form-config-edit').serialize());
+            // }
+            if ($.validate.form()) {
+                var formData = new FormData();
+                //其他字段内容
+                formData.append('configId', $("#configId").val());
+                formData.append('parentId', $("#treeId").val());
+                formData.append('configType', $("input[name='configType']:checked").val());
+                formData.append('showName', $("input[name='showName']").val());
+                formData.append('configName', $("input[name='configName']").val());
+                formData.append('orderNum', $("input[name='orderNum']").val());
+                formData.append('url', $("input[name='url']").val());
+                formData.append('text', $("textarea[name='text']").val());
+                formData.append('triggerType', $("input[name='triggerType']:checked").val());
+                formData.append('callbackData', $("input[name='callbackData']").val());
+                formData.append('callbackText', $("input[name='callbackText']").val());
+                formData.append('visible', $("input[name='visible']:checked").val());
+                formData.append('remark', $("textarea[name='remark']").val());
+                //图片文件内容
+                formData.append('imageFile', $('#image')[0].files[0]);
+                formData.append('videoFile', $('#video')[0].files[0]);
+                $.ajax({
+                    url: prefix + "/edit",
+                    type: 'post',
+                    cache: false,
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    dataType: "json",
+                    success: function (result) {
+                        $.operate.successCallback(result);
+                    }
+                });
+            }
+        }
+
+        $(function() {
+            $('input').on('ifChecked',
+                function(event) {
+                    var configType = $(event.target).val();
+                    configVisible(configType);
+                });
+        });
+
+        function configVisible(configType) {
+            if (configType === "B") {
+                let tt = $("input[name='triggerType']:checked").val()
+                if (tt === "URL") {
+                    $("#url").parents(".form-group").show();
+                } else {
+                    $("#url").parents(".form-group").hide();
+                }
+                $("#image").parents(".form-group").hide();
+                $("#video").parents(".form-group").hide();
+                $("#showName").parents(".form-group").show();
+                $("#text").parents(".form-group").hide();
+                $("#triggerType").parents(".form-group").show();
+                $("#callbackData").parents(".form-group").show();
+                $("#callbackText").parents(".form-group").hide();
+            } else if (configType === "F") {
+                $("#url").parents(".form-group").hide();
+                $("#image").parents(".form-group").hide();
+                $("#video").parents(".form-group").hide();
+                $("#showName").parents(".form-group").show();
+                $("#text").parents(".form-group").hide();
+                $("#triggerType").parents(".form-group").show();
+                $("#callbackData").parents(".form-group").hide();
+                $("#callbackText").parents(".form-group").show();
+            } else if (configType === "I") {
+                $("#url").parents(".form-group").hide();
+                $("#image").parents(".form-group").show();
+                $("#video").parents(".form-group").hide();
+                $("#showName").parents(".form-group").hide();
+                $("#text").parents(".form-group").hide();
+                $("#triggerType").parents(".form-group").hide();
+                $("#callbackData").parents(".form-group").hide();
+                $("#callbackText").parents(".form-group").hide();
+            } else if (configType === "V") {
+                $("#url").parents(".form-group").hide();
+                $("#image").parents(".form-group").hide();
+                $("#video").parents(".form-group").show();
+                $("#showName").parents(".form-group").hide();
+                $("#text").parents(".form-group").hide();
+                $("#triggerType").parents(".form-group").hide();
+                $("#callbackData").parents(".form-group").hide();
+                $("#callbackText").parents(".form-group").hide();
+            } else if (configType === "T") {
+                $("#url").parents(".form-group").hide();
+                $("#image").parents(".form-group").hide();
+                $("#video").parents(".form-group").hide();
+                $("#showName").parents(".form-group").hide();
+                $("#text").parents(".form-group").show();
+                $("#triggerType").parents(".form-group").hide();
+                $("#callbackData").parents(".form-group").hide();
+                $("#callbackText").parents(".form-group").hide();
+            } else if (configType === "D") {
+                $("#url").parents(".form-group").hide();
+                $("#image").parents(".form-group").hide();
+                $("#video").parents(".form-group").hide();
+                $("#showName").parents(".form-group").hide();
+                $("#text").parents(".form-group").hide();
+                $("#triggerType").parents(".form-group").show();
+                $("#callbackData").parents(".form-group").hide();
+                $("#callbackText").parents(".form-group").show();
+            }
+            let ct = $("input[name='configType']:checked").val();
+            let tt = $("input[name='triggerType']:checked").val();
+            if (ct === 'B' && tt === "URL") {
+                $("#url").parents(".form-group").show();
+                $("#callbackData").parents(".form-group").hide();
+            } else if (ct === 'B' && tt !== "URL"){
+                $("#url").parents(".form-group").hide();
+                $("#callbackData").parents(".form-group").show();
+            }
+        }
+
+        /*菜单管理-修改-选择菜单树*/
+        function selectConfigTree() {
+            var configId = $("#treeId").val();
+            if(configId > 0) {
+                var url = prefix + "/selectConfigTree/" + configId;
+                $.modal.open("选择配置", url, '380', '380');
+            } else {
+                $.modal.alertError("主配置不能选择");
+            }
+        }
+
+        function selectConfigTree() {
+            var configId = $("#treeId").val();
+            if(configId > 0) {
+                var url = prefix + "/selectConfigTree/" + configId;
+                var options = {
+                    title: '配置选择',
+                    width: "380",
+                    url: url,
+                    callBack: doSubmit
+                };
+                $.modal.openOptions(options);
+            } else {
+                $.modal.alertError("主配置不能选择");
+            }
+        }
+
+        function doSubmit(index, layero){
+            var body = $.modal.getChildFrame(index);
+            $("#treeId").val(body.find('#treeId').val());
+            $("#treeName").val(body.find('#treeName').val());
+            $.modal.close(index);
+        }
+    </script>
+</body>
+</html>

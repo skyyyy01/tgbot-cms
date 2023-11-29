@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.all.powerful.bot.mapper.PaymentRecordMapper">
+
+    <resultMap type="PaymentRecord" id="PaymentRecordResult">
+        <result property="id"    column="id"    />
+        <result property="orderId"    column="order_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="username"    column="username"    />
+        <result property="nickname"    column="nickname"    />
+        <result property="amount"    column="amount"    />
+        <result property="blockId"    column="block_id"    />
+        <result property="actualAmount"    column="actual_amount"    />
+        <result property="status"    column="status"    />
+        <result property="address"    column="address"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="expirationTime"    column="expiration_time"    />
+    </resultMap>
+
+    <sql id="selectPaymentRecordVo">
+        select id, order_id, user_id, username, nickname, amount,actual_amount, block_id,status, address, create_by, create_time, update_by, update_time, expiration_time from payment_record
+    </sql>
+
+    <select id="selectPaymentRecordList" parameterType="PaymentRecord" resultMap="PaymentRecordResult">
+        <include refid="selectPaymentRecordVo"/>
+        <where>
+            <if test="orderId != null  and orderId != ''"> and order_id = #{orderId}</if>
+            <if test="userId != null  and userId != ''"> and user_id = #{userId}</if>
+            <if test="username != null  and username != ''"> and username like concat('%', #{username}, '%')</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="params.beginCreateTime != null and params.beginCreateTime != '' and params.endCreateTime != null and params.endCreateTime != ''"> and create_time between #{params.beginCreateTime} and #{params.endCreateTime}</if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <select id="selectPaymentRecordById" parameterType="Long" resultMap="PaymentRecordResult">
+        <include refid="selectPaymentRecordVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertPaymentRecord" parameterType="PaymentRecord" useGeneratedKeys="true" keyProperty="id">
+        insert into payment_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderId != null and orderId != ''">order_id,</if>
+            <if test="userId != null and userId != ''">user_id,</if>
+            <if test="username != null and username != ''">username,</if>
+            <if test="nickname != null and nickname != ''">nickname,</if>
+            <if test="amount != null">amount,</if>
+            <if test="actualAmount != null">actual_amount,</if>
+            <if test="status != null and status != ''">status,</if>
+            <if test="address != null">address,</if>
+            <if test="blockId != null">block_id,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="expirationTime != null">expiration_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orderId != null and orderId != ''">#{orderId},</if>
+            <if test="userId != null and userId != ''">#{userId},</if>
+            <if test="username != null and username != ''">#{username},</if>
+            <if test="nickname != null and nickname != ''">#{nickname},</if>
+            <if test="amount != null">#{amount},</if>
+            <if test="actualAmount != null">#{actualAmount},</if>
+            <if test="status != null and status != ''">#{status},</if>
+            <if test="address != null">#{address},</if>
+            <if test="blockId != null">#{blockId},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="expirationTime != null">#{expirationTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePaymentRecord" parameterType="PaymentRecord">
+        update payment_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="orderId != null and orderId != ''">order_id = #{orderId},</if>
+            <if test="userId != null and userId != ''">user_id = #{userId},</if>
+            <if test="username != null and username != ''">username = #{username},</if>
+            <if test="nickname != null and nickname != ''">nickname = #{nickname},</if>
+            <if test="amount != null">amount = #{amount},</if>
+            <if test="actualAmount != null">actual_amount = #{actualAmount},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="blockId != null and blockId != ''">block_id = #{blockId},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="createBy != null and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="expirationTime != null">expiration_time = #{expirationTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deletePaymentRecordById" parameterType="Long">
+        delete from payment_record where id = #{id}
+    </delete>
+
+    <delete id="deletePaymentRecordByIds" parameterType="String">
+        delete from payment_record where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

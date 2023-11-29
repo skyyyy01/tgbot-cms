@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.List;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+
+import com.all.powerful.common.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -18,10 +20,6 @@ import com.all.powerful.common.core.domain.AjaxResult;
 import com.all.powerful.common.core.domain.entity.SysMenu;
 import com.all.powerful.common.core.domain.entity.SysUser;
 import com.all.powerful.common.core.text.Convert;
-import com.all.powerful.common.utils.CookieUtils;
-import com.all.powerful.common.utils.DateUtils;
-import com.all.powerful.common.utils.ServletUtils;
-import com.all.powerful.common.utils.StringUtils;
 import com.all.powerful.framework.shiro.service.SysPasswordService;
 import com.all.powerful.system.service.ISysConfigService;
 import com.all.powerful.system.service.ISysMenuService;
@@ -130,7 +128,9 @@ public class SysIndexController extends BaseController
     @GetMapping("/system/main")
     public String main(ModelMap mmap)
     {
+        SysUser user = ShiroUtils.getSysUser();
         mmap.put("version", AllPowerfulConfig.getVersion());
+        mmap.put("user", user);
         return "main";
     }
 

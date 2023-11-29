@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.all.powerful.bot.mapper.TgUserMapper">
+
+    <resultMap type="TgUser" id="TgUserResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="username"    column="username"    />
+        <result property="nickname"    column="nickname"    />
+        <result property="isAdmin"    column="is_admin"    />
+        <result property="payAmount"    column="pay_amount"    />
+        <result property="payCount"    column="pay_count"    />
+        <result property="payoutCount"    column="payout_count"    />
+        <result property="status"    column="status"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectTgUserVo">
+        select id, user_id, username, nickname, is_admin, pay_amount, payout_count, pay_count, status,remark, create_by, create_time, update_by, update_time from tg_user
+    </sql>
+
+    <select id="selectTgUserList" parameterType="TgUser" resultMap="TgUserResult">
+        <include refid="selectTgUserVo"/>
+        <where>
+            <if test="userId != null  and userId != ''"> and user_id = #{userId}</if>
+            <if test="username != null  and username != ''"> and username like concat('%', #{username}, '%')</if>
+            <if test="isAdmin != null  and isAdmin != ''"> and is_admin = #{isAdmin}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+
+    <select id="selectTgUserById" parameterType="Long" resultMap="TgUserResult">
+        <include refid="selectTgUserVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectTgUserByUserId" parameterType="String" resultMap="TgUserResult">
+        <include refid="selectTgUserVo"/>
+        where user_id = #{userId}
+    </select>
+
+    <insert id="insertTgUser" parameterType="TgUser" useGeneratedKeys="true" keyProperty="id">
+        insert into tg_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="username != null">username,</if>
+            <if test="nickname != null">nickname,</if>
+            <if test="isAdmin != null">is_admin,</if>
+            <if test="payAmount != null">pay_amount,</if>
+            <if test="payCount != null">pay_count,</if>
+            <if test="payoutCount != null">payout_count,</if>
+            <if test="status != null">status,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="username != null">#{username},</if>
+            <if test="nickname != null">#{nickname},</if>
+            <if test="isAdmin != null">#{isAdmin},</if>
+            <if test="payAmount != null">#{payAmount},</if>
+            <if test="payCount != null">#{payCount},</if>
+            <if test="payoutCount != null">#{payoutCount},</if>
+            <if test="status != null">#{status},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTgUser" parameterType="TgUser">
+        update tg_user
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="isAdmin != null">is_admin = #{isAdmin},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <update id="updateUserPayCount" parameterType="map">
+        update tg_user
+        set pay_count  = pay_count + 1,
+            pay_amount = pay_amount + #{payAmount,jdbcType=DECIMAL}
+        where user_id = #{userId,jdbcType=VARCHAR}
+    </update>
+
+    <update id="updateUserPayoutAmount" parameterType="map">
+        update tg_user
+        set payout_count = payout_count + #{payAmount,jdbcType=DECIMAL}
+        where user_id = #{userId,jdbcType=VARCHAR}
+    </update>
+
+    <delete id="deleteTgUserById" parameterType="Long">
+        delete from tg_user where id = #{id}
+    </delete>
+
+    <delete id="deleteTgUserByIds" parameterType="String">
+        delete from tg_user where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

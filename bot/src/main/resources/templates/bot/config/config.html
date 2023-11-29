@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('机器人配置列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="config-form">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>显示名称：</label>
+                                <input type="text" name="showName"/>
+                            </li>
+                            <li>
+                                <label>配置类型：</label>
+                                <select name="configType" th:with="type=${@dict.getType('bot_config_type')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <label>触发方式：</label>
+                                <select name="triggerType" th:with="type=${@dict.getType('bot_trigger_type')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <label>配置状态：</label>
+                                <select name="status" th:with="type=${@dict.getType('sys_normal_disable')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.add(0)" shiro:hasPermission="bot:config:add">
+                    <i class="fa fa-plus"></i> 添加
+                </a>
+                <a class="btn btn-primary" onclick="$.operate.edit()" shiro:hasPermission="bot:config:edit">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+<!--                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="bot:config:remove">-->
+<!--                    <i class="fa fa-remove"></i> 删除-->
+<!--                </a>-->
+                <a class="btn btn-info" id="expandAllBtn">
+                    <i class="fa fa-exchange"></i> 展开/折叠
+                </a>
+                <a class="btn btn-success" onclick="describe()">
+                    <i class="fa fa-navicon"></i> 配置说明
+                </a>
+<!--                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="bot:config:export">-->
+<!--                    <i class="fa fa-download"></i> 导出-->
+<!--                </a>-->
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-tree-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('bot:config:edit')}]];
+        var addFlag = [[${@permission.hasPermi('bot:config:add')}]];
+        var removeFlag = [[${@permission.hasPermi('bot:config:remove')}]];
+        var configTypeDatas = [[${@dict.getType('bot_config_type')}]];
+        var triggerTypeDatas = [[${@dict.getType('bot_trigger_type')}]];
+        var visibleDatas = [[${@dict.getType('sys_normal_disable')}]];
+        var prefix = ctx + "bot/config";
+
+        $(function() {
+            var options = {
+                code: "configId",
+                parentCode: "parentId",
+                uniqueId: "configId",
+                expandAll: false,
+                expandFirst: false,
+                url: prefix + "/list",
+                createUrl: prefix + "/add/{id}",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove/{id}",
+                // exportUrl: prefix + "/export",
+                modalName: "机器人配置",
+                columns: [{
+                    field: 'selectItem',
+                    radio: true
+                },
+                {
+                    field: 'configName',
+                    title: '配置名称'
+                },
+                {
+                    field: 'showName',
+                    title: '显示名称'
+                },
+                {
+                    field: 'configType',
+                    title: '配置类型',
+                    formatter: function(value, row, index) {
+                       return $.table.selectDictLabel(configTypeDatas, value);
+                    }
+                },
+                {
+                    field: 'orderNum',
+                    title: '显示顺序'
+                },
+                {
+                    field: 'url',
+                    title: '自定义URL',
+                    formatter: paramsMatter
+                },
+                {
+                    field: 'image',
+                    title: '自定义图片',
+                    formatter: function(value, row, index) {
+                        return $.table.imageView(value);
+                    }
+                },
+                {
+                    field: 'video',
+                    title: '自定义视频',
+                    formatter: paramsMatter
+                },
+                {
+                    field: 'text',
+                    title: '自定义文字',
+                    formatter: paramsMatter
+                },
+                {
+                    field: 'triggerType',
+                    title: '触发方式',
+                    formatter: function(value, row, index) {
+                       return $.table.selectDictLabel(triggerTypeDatas, value);
+                    }
+                },
+                {
+                    field: 'callbackData',
+                    title: '按钮编码'
+                },
+                {
+                    field: 'callbackText',
+                    title: '文本指令'
+                },
+                {
+                    field: 'visible',
+                    title: '配置状态',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                       return $.table.selectDictLabel(visibleDatas, value);
+                    }
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.configId + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="btn btn-info btn-xs ' + addFlag + '" href="javascript:void(0)" onclick="$.operate.add(\'' + row.configId + '\')"><i class="fa fa-plus"></i>新增</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.configId + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.treeTable.init(options);
+        });
+
+
+        //表格超出宽度鼠标悬停显示td内容
+        function paramsMatter(value,row,index) {
+            var span=document.createElement("span");
+            span.setAttribute("title",value);
+            if (value){
+                span.innerHTML = "已设置";
+            } else {
+                span.innerHTML = "--";
+            }
+            return span.outerHTML;
+        }
+
+        /* webhook详情 */
+        function describe() {
+            var url = prefix + '/describe';
+            var tabName = "配置说明";
+            $.modal.open(tabName, url);
+        }
+    </script>
+</body>
+</html>

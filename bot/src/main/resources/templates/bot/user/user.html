@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('客户列表列表')"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <label>用户ID：</label>
+                            <input type="text" name="userId"/>
+                        </li>
+                        <li>
+                            <label>用户名：</label>
+                            <input type="text" name="username"/>
+                        </li>
+                        <li>
+                            <label>管理员：</label>
+                            <select name="isAdmin" th:with="type=${@dict.getType('sys_yes_no')}">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}"
+                                        th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i
+                                    class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()"
+               shiro:hasPermission="bot:user:remove">
+                <i class="fa fa-remove"></i> 删除
+            </a>
+            <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="bot:user:export">
+                <i class="fa fa-download"></i> 导出
+            </a>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: bootstrap-table-editable-js" />
+<script th:inline="javascript">
+    var removeFlag = [[${@permission.hasPermi('bot:user:remove')}]];
+    var isAdminDatas = [[${@dict.getType('sys_yes_no')}]];
+    var prefix = ctx + "bot/user";
+
+    $(function () {
+        var options = {
+            url: prefix + "/list",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            onEditableSave: onEditableSave,
+            modalName: "客户列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'id',
+                    title: 'ID',
+                    visible: false
+                },
+                {
+                    field: 'userId',
+                    title: '用户ID'
+                },
+                {
+                    field: 'username',
+                    title: '用户名',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    }
+                },
+                {
+                    field: 'nickname',
+                    title: '昵称',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    }
+                },
+                {
+                    field: 'isAdmin',
+                    title: '是否管理员',
+                    formatter: function (value, row, index) {
+                        return adminTools(row);
+                    }
+                },
+                {
+                    field: 'payCount',
+                    title: '成功交易'
+                },
+                {
+                    field: 'payAmount',
+                    title: '共支付'
+                },
+                {
+                    field: 'payoutCount',
+                    title: '共下发'
+                },
+                {
+                    field: 'status',
+                    title: '状态',
+                    formatter: function (value, row, index) {
+                        return statusTools(row);
+                    }
+                },
+                {
+                    field: 'createTime',
+                    title: '创建时间',
+                    sortable: true,
+                    cellStyle: {
+                        css:{"white-space":"nowrap"}
+                    }
+                },
+                {
+                    field: 'remark',
+                    title: '备注',
+                    editable:true
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+
+    function onEditableSave (field, row, rowIndex, oldValue, $el) {
+        if (field === "remark") {
+            $.operate.post(prefix + "/edit", {"id" : row.id, "remark" : row[field]});
+        }
+    }
+
+
+    function statusTools(row) {
+        if (row.status === "1") {
+            return '<i class=\"fa fa-toggle-off text-info fa-2x\" onclick="start(\'' + row.id + '\')"></i> ';
+        } else {
+            return '<i class=\"fa fa-toggle-on text-info fa-2x\" onclick="stop(\'' + row.id + '\')"></i> ';
+        }
+    }
+
+    function stop(id) {
+        $.modal.confirm('确认禁用此用户吗？', function () {
+            $.operate.post(prefix + "/changeStatus", {"id": id, "status": 1});
+        })
+    }
+
+    function start(id) {
+        $.modal.confirm('确认解禁此用户吗？', function () {
+            $.operate.post(prefix + "/changeStatus", {"id": id, "status": 0});
+        })
+    }
+
+    function adminTools(row) {
+        if (row.isAdmin === "N") {
+            return '<i class=\"fa fa-toggle-off text-info fa-2x\" onclick="admin(\'' + row.id + '\')"></i> ';
+        } else {
+            return '<i class=\"fa fa-toggle-on text-info fa-2x\" onclick="unadmin(\'' + row.id + '\')"></i> ';
+        }
+    }
+
+    function unadmin(id) {
+        $.modal.confirm('确认取消此用户管理员吗？', function () {
+            $.operate.post(prefix + "/changeStatus", {"id": id, "isAdmin": "N"});
+        })
+    }
+
+    function admin(id) {
+        $.modal.confirm('确认此用户为管理员吗？', function () {
+            $.operate.post(prefix + "/changeStatus", {"id": id, "isAdmin": "Y"});
+        })
+    }
+</script>
+</body>
+</html>
