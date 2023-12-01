@@ -32,9 +32,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
-import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ForceReplyKeyboard;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
@@ -68,8 +66,8 @@ public class DynamicTelegramBot extends TelegramLongPollingBot {
 
     private static final String DATE_FORMAT = "yyyyMMddHHmmss";
 
-    private static final String INPUT_NUM = "请输入您要购买的数量";
-    private static final String INPUT_ADDRESS = "请输入TRC20接收地址";
+    private static final String INPUT_NUM = "请输入您要购买的数量(不支持小数位)";
+    private static final String INPUT_ADDRESS = "请输入您的 USDT（TRC20）接收地址";
     private static final String ILLEGAL = "您的输入不合法,请重新输入";
     private static final AtomicInteger counter = new AtomicInteger(0);
 
@@ -108,68 +106,6 @@ public class DynamicTelegramBot extends TelegramLongPollingBot {
                 String chatId = update.getMessage().getChatId().toString();
                 checkUser(chatId);
                 String messageText = update.getMessage().getText();
-                Message replyToMessage = update.getMessage().getReplyToMessage();
-                String replyToMessageText = null;
-                if (replyToMessage != null) {
-                    replyToMessageText = replyToMessage.getText();
-                }
-                String amountSessionId = getAmountSessionId(chatId);
-                if (amountSessionId != null
-                        && StringUtils.isNotBlank(replyToMessageText)
-                        && (replyToMessageText.equals(INPUT_NUM) || replyToMessageText.equals(ILLEGAL))) {
-                    if (isValidAmount(messageText.trim())) {
-                        String orderId = generateOrderNumber();
-                        setOrderId(chatId, orderId);
-                        setAmount(chatId + orderId, messageText.trim());
-                        deleteMessage(chatId, replyToMessage.getMessageId());
-                        payConfirm(chatId);
-                    } else {
-                        updateAmountSessionExpiration(chatId);
-                        deleteMessage(chatId, replyToMessage.getMessageId());
-                        sendTextMessage(chatId, ILLEGAL, new ForceReplyKeyboard(true));
-                    }
-                    return;
-                }
-
-                String accountSessionId = getAccountSessionId(chatId);
-                if (accountSessionId != null
-                        && StringUtils.isNotBlank(replyToMessageText)
-                        && (replyToMessageText.equals(INPUT_ADDRESS) || replyToMessageText.equals(ILLEGAL))) {
-                    if (isValidUSDTTRC20Address(messageText.trim())) {
-                        setAccount(chatId + getOrderId(chatId), messageText.trim());
-                        setReceiveAddress(chatId + getOrderId(chatId), messageText.trim());
-                        deleteAccountSessionId(chatId);
-                        deleteMessage(chatId, replyToMessage.getMessageId());
-                        //                    pay.check.status
-                        if (checkLimit(chatId, messageText.trim())) {
-                            payInfo(chatId);
-                        } else {
-                            deleteOrderId(chatId);
-                        }
-                    } else {
-                        updateAccountSessionExpiration(chatId);
-                        deleteMessage(chatId, replyToMessage.getMessageId());
-                        sendTextMessage(chatId, ILLEGAL, new ForceReplyKeyboard(true));
-                    }
-                    return;
-                }
-
-                String valuationSessionId = getValuationSessionId(chatId);
-                if (valuationSessionId != null
-                        && StringUtils.isNotBlank(replyToMessageText)
-                        && (replyToMessageText.equals(INPUT_NUM) || replyToMessageText.equals(ILLEGAL))) {
-                    if (isValidAmount(messageText.trim())) {
-                        deleteValuationSessionId(chatId);
-                        setAmount(chatId, messageText.trim());
-                        deleteMessage(chatId, replyToMessage.getMessageId());
-                        processValuation(update);
-                    } else {
-                        updateAmountSessionExpiration(chatId);
-                        deleteMessage(chatId, replyToMessage.getMessageId());
-                        sendTextMessage(chatId, ILLEGAL, new ForceReplyKeyboard(true));
-                    }
-                    return;
-                }
 
                 String commandText = messageText.replace("@" + this.botUsername, "").trim();
 
@@ -182,6 +118,58 @@ public class DynamicTelegramBot extends TelegramLongPollingBot {
                         sendPhotoMessage(chatId, botConfig);
                     } else if (botConfig.getTriggerType().equals(TriggerType.CALLBACK_VIDEO.name())) {
                         sendVideoMessage(chatId, botConfig);
+                    }
+                    return;
+                }
+
+                String amountSessionId = getAmountSessionId(chatId);
+                if (amountSessionId != null) {
+                    if (isValidAmount(messageText.trim())) {
+                        String orderId = generateOrderNumber();
+                        setOrderId(chatId, orderId);
+                        setAmount(chatId + orderId, messageText.trim());
+//                        deleteMessage(chatId, replyToMessage.getMessageId());
+                        payConfirm(chatId);
+                    } else {
+                        updateAmountSessionExpiration(chatId);
+//                        deleteMessage(chatId, replyToMessage.getMessageId());
+                        sendTextMessage(chatId, ILLEGAL, null);
+                    }
+                    return;
+                }
+
+                String accountSessionId = getAccountSessionId(chatId);
+                if (accountSessionId != null) {
+                    if (isValidUSDTTRC20Address(messageText.trim())) {
+                        setAccount(chatId + getOrderId(chatId), messageText.trim());
+                        setReceiveAddress(chatId + getOrderId(chatId), messageText.trim());
+                        deleteAccountSessionId(chatId);
+//                        deleteMessage(chatId, replyToMessage.getMessageId());
+                        //                    pay.check.status
+                        if (checkLimit(chatId, messageText.trim())) {
+                            payInfo(chatId);
+                        } else {
+                            deleteOrderId(chatId);
+                        }
+                    } else {
+                        updateAccountSessionExpiration(chatId);
+//                        deleteMessage(chatId, replyToMessage.getMessageId());
+                        sendTextMessage(chatId, ILLEGAL, null);
+                    }
+                    return;
+                }
+
+                String valuationSessionId = getValuationSessionId(chatId);
+                if (valuationSessionId != null) {
+                    if (isValidAmount(messageText.trim())) {
+                        deleteValuationSessionId(chatId);
+                        setAmount(chatId, messageText.trim());
+//                        deleteMessage(chatId, replyToMessage.getMessageId());
+                        processValuation(update);
+                    } else {
+                        updateAmountSessionExpiration(chatId);
+//                        deleteMessage(chatId, replyToMessage.getMessageId());
+                        sendTextMessage(chatId, ILLEGAL, null);
                     }
                 }
             } else if (update.hasMessage() && update.getMessage().hasEntities()) {
@@ -230,7 +218,6 @@ public class DynamicTelegramBot extends TelegramLongPollingBot {
                     deleteMessage(chatId, messageId);
                     cancelOrder(chatId);
                     deleteOrderId(chatId);
-                    return;
                 }
 
                 if (commandText.equalsIgnoreCase(MessageType.PAY_CONFIRM.getCode())) {
@@ -251,7 +238,7 @@ public class DynamicTelegramBot extends TelegramLongPollingBot {
                     }
                     if (commandText.equalsIgnoreCase(MessageType.VALUATION.getCode())
                             || commandText.equalsIgnoreCase(MessageType.BUY.getCode())) {
-                        sendTextMessage(chatId, INPUT_NUM, new ForceReplyKeyboard(true));
+                        sendTextMessage(chatId, INPUT_NUM, null);
                     }
                 }
             } else {
@@ -295,8 +282,10 @@ public class DynamicTelegramBot extends TelegramLongPollingBot {
             List<PaymentRecord> records = SpringUtils.getBean(IPaymentRecordService.class).selectPaymentRecordList(paymentRecord);
             if (records.size() > 0) {
                 PaymentRecord record = records.get(0);
-                record.setStatus("3");
-                SpringUtils.getBean(IPaymentRecordService.class).updatePaymentRecord(record);
+                if (!record.getStatus().equals("0")){
+                    record.setStatus("3");
+                    SpringUtils.getBean(IPaymentRecordService.class).updatePaymentRecord(record);
+                }
             }
         }
     }
@@ -332,7 +321,7 @@ public class DynamicTelegramBot extends TelegramLongPollingBot {
     }
 
     private void askAddress(String chatId) throws TelegramApiException {
-        sendTextMessage(chatId, INPUT_ADDRESS, new ForceReplyKeyboard(true));
+        sendTextMessage(chatId, INPUT_ADDRESS, null);
     }
 
     @Transactional
@@ -646,11 +635,10 @@ public class DynamicTelegramBot extends TelegramLongPollingBot {
                 PayoutRecord record = records.get(i);
                 String dateToStr = DateUtils.parseDateToStr("yyyy-MM-dd", record.getCreateTime());
                 //[超链接](http://www.example.com/)
-                sb.append(dateToStr).append("|")
-                        .append(PayoutStatus.getInfoByCode(Integer.parseInt(record.getpStatus()))).append("|")
-                        .append("\uD83D\uDCB0 ").append(record.getAmount().toPlainString()).append("|")
-                        .append("\uD83D\uDCB0 ").append(record.getPayAmount().toPlainString()).append("");
-                sb.append("\n");
+                sb.append(dateToStr).append(" | ")
+                        .append(PayoutStatus.getInfoByCode(Integer.parseInt(record.getpStatus()))).append(" | ")
+                        .append("\uD83D\uDCB0").append(record.getAmount().toPlainString()).append(" | ")
+                        .append("\uD83D\uDCB8").append(record.getPayAmount().toPlainString()).append("\n");
                 if (i >= 9) {
                     break;
                 }
@@ -768,7 +756,7 @@ public class DynamicTelegramBot extends TelegramLongPollingBot {
     }
 
     private boolean isValidAmount(String amount) {
-        String regex = "^[1-9]\\\\d*(\\\\.\\\\d{1,2})?$";
+        String regex = "^[1-9]\\d*$";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(amount);
         return matcher.matches();

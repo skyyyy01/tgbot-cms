@@ -1067,6 +1067,7 @@ alter table payment_record add column `block_id` varchar(200) comment '区块交
 alter table payment_record add column `expiration_time` datetime comment '过期时间';
 alter table tg_user modify column `payout_count` decimal(16,2) default 0.00 comment '共下发';
 alter table tg_user add column `remark` varchar(500) comment '备注';
+alter table tg_user add column `is_red` varchar(1)  default '1' comment '标红';
 
 
 

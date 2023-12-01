@@ -82,37 +82,53 @@
                 },
                 {
                     field: 'orderId',
-                    title: '订单编号'
+                    title: '订单编号',
+                    visible: false
                 },
                 {
                     field: 'userId',
-                    title: '电报ID'
+                    title: '电报ID',
+                    formatter: function(value, row, index) {
+                        if (row.isRed === "0"){
+                            return '<span style="color: red; font-weight: bold;">' + value + '</span>';
+                        }
+                        return value;
+                    }
                 },
                 {
                     field: 'username',
                     title: '用户名',
                     formatter: function(value, row, index) {
-                        return $.table.tooltip(value);
+                        return $.table.tooltip(value,6,'open');
                     }
                 },
                 {
                     field: 'nickname',
                     title: '网名',
+                    visible: false,
                     formatter: function(value, row, index) {
-                        return $.table.tooltip(value);
+                        return $.table.tooltip(value,6,'open');
                     }
                 },
                 {
                     field: 'amount',
-                    title: '支付金额'
+                    title: '支付金额',
+                    visible: false
                 },
                 {
                     field: 'actualAmount',
-                    title: '实际支付金额'
+                    title: '实际支付'
                 },
                 {
                     field: 'status',
                     title: '支付状态',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(statusDatas, value);
+                    },
+                },
+                {
+                    field: 'status',
+                    title: '状态修改',
                     align: 'center',
                     editable : {
                         type : 'select',
@@ -141,14 +157,9 @@
                     formatter: function(value, row, index) {
                         var actions = [];
                         let text = $.common.nullToStr(value);
-                        if(text.length > 15) {
-                            let head = text.substr(0,6)
-                            let tail = text.substr(text.length - 6)
-                            text = head + '...' + tail
-                            actions.push($.common.sprintf('<a href="###" class="tooltip-show" data-toggle="tooltip" data-target="copy" title="%s">%s</a> ', value, text))
-                        } else {
-                            actions.push(text)
-                        }
+                        text = text.substr(text.length - 6)
+                        actions.push($.common.sprintf('<a href="###" class="tooltip-show" data-toggle="tooltip" data-target="copy" title="%s">%s</a> ', value, text))
+
                         if (value) {
                             actions.push('<a class="btn btn-default btn-xs" href="javascript:void(0)" onclick="copyText(\'' + value + '\')"><i class="fa fa-copy"></i></a>')
                         }
@@ -161,26 +172,22 @@
                 },
                 {
                     field: 'updateTime',
-                    title: '更新时间'
+                    title: '更新时间',
+                    visible: false
                 },
                 {
                     field: 'expirationTime',
-                    title: '过期时间'
+                    title: '过期时间',
+                    visible: false
                 },
                 {
                     field: 'blockId',
-                    title: '区块交易ID',
+                    title: '哈希',
                     formatter: function(value, row, index) {
                         var actions = [];
                         let text = $.common.nullToStr(value);
-                        if(text.length > 15) {
-                            let head = text.substr(0,6)
-                            let tail = text.substr(text.length - 6)
-                            text = head + '...' + tail
-                            actions.push($.common.sprintf('<a href="###" class="tooltip-show" data-toggle="tooltip" data-target="copy" title="%s">%s</a> ', value, text))
-                        } else {
-                            actions.push(text)
-                        }
+                        text = text.substr(text.length - 4)
+                        actions.push($.common.sprintf('<a href="###" class="tooltip-show" data-toggle="tooltip" data-target="copy" title="%s">%s</a> ', value, text))
                         if (value) {
                             actions.push('<a class="btn btn-default btn-xs" href="javascript:void(0)" onclick="copyText(\'' + value + '\')"><i class="fa fa-copy"></i></a>')
                         }

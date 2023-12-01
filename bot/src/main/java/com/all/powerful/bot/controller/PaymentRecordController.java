@@ -108,7 +108,7 @@ public class PaymentRecordController extends BaseController {
     @PostMapping("/edit")
     @ResponseBody
     public AjaxResult editSave(PaymentRecord paymentRecord) {
-        paymentRecord.setUsername(ShiroUtils.getLoginName());
+        paymentRecord.setUpdateBy(ShiroUtils.getLoginName());
         return toAjax(paymentRecordService.updatePaymentRecord(paymentRecord));
     }
 

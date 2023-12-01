@@ -58,9 +58,23 @@ public class PaymentRecord extends BaseEntity
     @Excel(name = "区块交易号")
     private String blockId;
 
+    /**
+     * 标红
+     */
+    @Excel(name = "标红")
+    private String isRed;
+
     /** 过期时间 */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date expirationTime;
+
+    public String getIsRed() {
+        return isRed;
+    }
+
+    public void setIsRed(String isRed) {
+        this.isRed = isRed;
+    }
 
     public Date getExpirationTime() {
         return expirationTime;

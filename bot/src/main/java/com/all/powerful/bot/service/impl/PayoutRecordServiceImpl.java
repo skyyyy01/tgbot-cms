@@ -92,9 +92,12 @@ public class PayoutRecordServiceImpl implements IPayoutRecordService {
     public int updatePayoutRecord(PayoutRecord payoutRecord) {
         payoutRecord.setUpdateTime(DateUtils.getNowDate());
         payoutRecord.setUpdateBy(ShiroUtils.getLoginName());
+        PayoutRecord record = payoutRecordMapper.selectPayoutRecordById(payoutRecord.getId());
+        if (record.getpStatus().equals("0")){
+            return 0;
+        }
         if ("0".equals(payoutRecord.getpStatus())) {
             try {
-                PayoutRecord record = payoutRecordMapper.selectPayoutRecordById(payoutRecord.getId());
                 BotList botList = new BotList();
                 botList.setStatus("0");
                 List<BotList> botLists = botListService.selectBotListList(botList);

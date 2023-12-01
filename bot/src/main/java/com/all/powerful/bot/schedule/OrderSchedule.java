@@ -39,7 +39,11 @@ public class OrderSchedule {
             log.info("定时更新订单 -> {}", records);
             for (PaymentRecord record : records) {
                 try {
-                    if (now.compareTo(record.getExpirationTime()) >= 0) {
+                    Date expirationTime = record.getExpirationTime();
+                    if (expirationTime == null) {
+                        expirationTime = new Date(record.getCreateTime().getTime() + (60 * 10 * 1000));
+                    }
+                    if (now.compareTo(expirationTime) >= 0) {
                         record.setStatus("2");
                         paymentRecordService.updatePaymentRecord(record);
                         BotList botList = new BotList();

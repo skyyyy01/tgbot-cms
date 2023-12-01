@@ -14,6 +14,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="payCount"    column="pay_count"    />
         <result property="payoutCount"    column="payout_count"    />
         <result property="status"    column="status"    />
+        <result property="isRed"    column="is_red"    />
         <result property="remark"    column="remark"    />
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
@@ -22,7 +23,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectTgUserVo">
-        select id, user_id, username, nickname, is_admin, pay_amount, payout_count, pay_count, status,remark, create_by, create_time, update_by, update_time from tg_user
+        select id, user_id, username, nickname, is_admin, pay_amount, payout_count, pay_count, status,is_red,remark, create_by, create_time, update_by, update_time from tg_user
     </sql>
 
     <select id="selectTgUserList" parameterType="TgUser" resultMap="TgUserResult">
@@ -32,6 +33,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="username != null  and username != ''"> and username like concat('%', #{username}, '%')</if>
             <if test="isAdmin != null  and isAdmin != ''"> and is_admin = #{isAdmin}</if>
             <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="isRed != null  and isRed != ''"> and is_red = #{isRed}</if>
         </where>
     </select>
 
@@ -56,6 +58,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="payCount != null">pay_count,</if>
             <if test="payoutCount != null">payout_count,</if>
             <if test="status != null">status,</if>
+            <if test="isRed != null">is_red,</if>
             <if test="remark != null">remark,</if>
             <if test="createBy != null">create_by,</if>
             <if test="createTime != null">create_time,</if>
@@ -71,6 +74,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="payCount != null">#{payCount},</if>
             <if test="payoutCount != null">#{payoutCount},</if>
             <if test="status != null">#{status},</if>
+            <if test="isRed != null">#{isRed},</if>
             <if test="remark != null">#{remark},</if>
             <if test="createBy != null">#{createBy},</if>
             <if test="createTime != null">#{createTime},</if>
@@ -84,6 +88,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="SET" suffixOverrides=",">
             <if test="isAdmin != null">is_admin = #{isAdmin},</if>
             <if test="status != null">status = #{status},</if>
+            <if test="isRed != null">is_red = #{isRed},</if>
             <if test="remark != null">remark = #{remark},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>

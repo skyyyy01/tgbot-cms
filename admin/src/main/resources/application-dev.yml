@@ -23,7 +23,7 @@ spring:
             # ***REMOVED***
             master:
                 url: jdbc:mysql://localhost:3306/trx?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
-                username: root
+                username: trx
                 password: ***REMOVED***
             # 从库数据源
             slave:

@@ -60,4 +60,5 @@ public interface IPaymentRecordService
      */
     public int deletePaymentRecordById(Long id);
 
+    String selectBlockTransactionId(String orderId);
 }

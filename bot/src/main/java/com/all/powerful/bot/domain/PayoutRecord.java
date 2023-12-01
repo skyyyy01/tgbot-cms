@@ -74,6 +74,12 @@ public class PayoutRecord extends BaseEntity {
     private String pStatus;
 
     /**
+     * 标红
+     */
+    @Excel(name = "标红")
+    private String isRed;
+
+    /**
      * 下发地址
      */
     @Excel(name = "下发地址")
@@ -84,6 +90,14 @@ public class PayoutRecord extends BaseEntity {
      */
     @Excel(name = "交易哈希")
     private String hash;
+
+    public String getIsRed() {
+        return isRed;
+    }
+
+    public void setIsRed(String isRed) {
+        this.isRed = isRed;
+    }
 
     public void setId(Long id) {
         this.id = id;

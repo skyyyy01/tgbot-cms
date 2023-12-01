@@ -6,9 +6,9 @@ package com.all.powerful.bot.enums;
  * @author all powerful
  */
 public enum PayoutStatus {
-    DONE(0, "已下发成功"),
-    WAIT(1, "下发中"),
-    VERIFY(2, "等待下发中"),
+    DONE(0, "下发成功"),
+    WAIT(1, "等待下发"),
+    VERIFY(2, "等待下发"),
     FAIL(3, "审核失败");
 
     private final int code;

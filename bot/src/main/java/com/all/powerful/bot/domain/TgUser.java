@@ -70,6 +70,12 @@ public class TgUser extends BaseEntity {
     /**
      * 状态
      */
+    @Excel(name = "标红")
+    private String isRed;
+
+    /**
+     * 状态
+     */
     @Excel(name = "备注")
     private String remark;
 
@@ -87,6 +93,14 @@ public class TgUser extends BaseEntity {
     @Override
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public String getIsRed() {
+        return isRed;
+    }
+
+    public void setIsRed(String isRed) {
+        this.isRed = isRed;
     }
 
     public void setId(Long id) {

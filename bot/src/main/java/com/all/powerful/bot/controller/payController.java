@@ -16,6 +16,7 @@ import com.all.powerful.system.service.ISysConfigService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -77,7 +78,7 @@ public class payController extends BaseController {
                             && payCallback.getAmount().compareTo(record.getAmount()) == 0) {
                         if (payCallback.getStatus() == 2) {
                             record.setStatus("0");
-                            record.setBlockId(payCallback.getBlock_transaction_id());
+                            record.setBlockId(paymentRecordService.selectBlockTransactionId(record.getOrderId()));
                         } else if (payCallback.getStatus() == 3) {
                             record.setStatus("2");
                             record.setBlockId(payCallback.getBlock_transaction_id());
@@ -132,23 +133,24 @@ public class payController extends BaseController {
         tgUserService.updateUserPayCount(userId, payAmount);
     }
 
-    private void notifyAdmin(PaymentRecord record, TelegramLongPollingBot tgBot) throws TelegramApiException {
+    @Async
+    public void notifyAdmin(PaymentRecord record, TelegramLongPollingBot tgBot) throws TelegramApiException {
         TgUser tgUser = new TgUser();
-        tgUser.setIsAdmin("0");
+        tgUser.setIsAdmin("Y");
         List<TgUser> tgUsers = tgUserService.selectTgUserList(tgUser);
         if (tgUsers.size() > 0) {
             for (TgUser user : tgUsers) {
                 SendMessage sendMessage = new SendMessage();
                 sendMessage.setChatId(user.getUserId());
-                String sb = "<b>\uD83D\uDCE2\uD83D\uDCE2有新的交易支付成功！</b>\n" +
-                        "<pre>订单号：" + record.getOrderId() + "</pre>\n" +
-                        "<pre>用户名：" + record.getUsername() + "</pre>\n" +
-                        "<pre>用户ID：" + record.getUserId() + "</pre>\n" +
-                        "<pre>请求支付金额：" + record.getAmount() + "</pre>\n" +
-                        "<pre>实际支付金额：" + record.getActualAmount() + "</pre>\n" +
-                        "<pre>钱包地址：" + record.getAddress() + "</pre>\n" +
-                        "<pre>订单创建时间：" + DateUtils.parseDateToStr("yyyy-MM-dd HH:mm:ss", record.getCreateTime()) + "</pre>\n" +
-                        "<pre>支付成功时间：" + DateUtils.parseDateToStr("yyyy-MM-dd HH:mm:ss", record.getUpdateTime()) + "</pre>";
+                String sb = "<b>\uD83D\uDCE2\uD83D\uDCE2有新的交易支付成功！</b>";
+//                        "<pre>订单号：" + record.getOrderId() + "</pre>\n" +
+//                        "<pre>用户名：" + record.getUsername() + "</pre>\n" +
+//                        "<pre>用户ID：" + record.getUserId() + "</pre>\n" +
+//                        "<pre>请求支付金额：" + record.getAmount() + "</pre>\n" +
+//                        "<pre>实际支付金额：" + record.getActualAmount() + "</pre>\n" +
+//                        "<pre>钱包地址：" + record.getAddress() + "</pre>\n" +
+//                        "<pre>订单创建时间：" + DateUtils.parseDateToStr("yyyy-MM-dd HH:mm:ss", record.getCreateTime()) + "</pre>\n" +
+//                        "<pre>支付成功时间：" + DateUtils.parseDateToStr("yyyy-MM-dd HH:mm:ss", record.getUpdateTime()) + "</pre>";
                 sendMessage.setText(sb);
                 sendMessage.setParseMode(ParseMode.HTML);
                 tgBot.execute(sendMessage);

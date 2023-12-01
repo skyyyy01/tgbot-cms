@@ -14,6 +14,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="blockId"    column="block_id"    />
         <result property="actualAmount"    column="actual_amount"    />
         <result property="status"    column="status"    />
+        <result property="isRed"    column="is_red"    />
         <result property="address"    column="address"    />
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
@@ -27,15 +28,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </sql>
 
     <select id="selectPaymentRecordList" parameterType="PaymentRecord" resultMap="PaymentRecordResult">
-        <include refid="selectPaymentRecordVo"/>
+        select t1.*, t2.is_red from payment_record t1
+        left join tg_user t2 on t1.user_id = t2.user_id
         <where>
-            <if test="orderId != null  and orderId != ''"> and order_id = #{orderId}</if>
-            <if test="userId != null  and userId != ''"> and user_id = #{userId}</if>
-            <if test="username != null  and username != ''"> and username like concat('%', #{username}, '%')</if>
-            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="orderId != null  and orderId != ''"> and t1.order_id = #{orderId}</if>
+            <if test="userId != null  and userId != ''"> and t1.user_id = #{userId}</if>
+            <if test="username != null  and username != ''"> and t1.username like concat('%', #{username}, '%')</if>
+            <if test="status != null  and status != ''"> and t1.status = #{status}</if>
             <if test="params.beginCreateTime != null and params.beginCreateTime != '' and params.endCreateTime != null and params.endCreateTime != ''"> and create_time between #{params.beginCreateTime} and #{params.endCreateTime}</if>
         </where>
-        order by create_time desc
+        order by t1.create_time desc
+    </select>
+
+    <select id="selectBlockTransactionId" parameterType="String" resultType="String">
+        select block_transaction_id from orders
+        where order_id = #{orderId}
     </select>
 
     <select id="selectPaymentRecordById" parameterType="Long" resultMap="PaymentRecordResult">

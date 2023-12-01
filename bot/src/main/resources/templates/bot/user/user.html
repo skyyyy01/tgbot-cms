@@ -27,6 +27,14 @@
                             </select>
                         </li>
                         <li>
+                            <label>标红：</label>
+                            <select name="isRed" th:with="type=${@dict.getType('sys_yes_no')}">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}"
+                                        th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                        <li>
                             <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i
                                     class="fa fa-search"></i>&nbsp;搜索</a>
                             <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i
@@ -75,7 +83,13 @@
                 },
                 {
                     field: 'userId',
-                    title: '用户ID'
+                    title: '用户ID',
+                    formatter: function(value, row, index) {
+                        if (row.isRed === "0"){
+                            return '<span style="color: red; font-weight: bold;">' + value + '</span>';
+                        }
+                        return value;
+                    }
                 },
                 {
                     field: 'username',
@@ -96,6 +110,13 @@
                     title: '是否管理员',
                     formatter: function (value, row, index) {
                         return adminTools(row);
+                    }
+                },
+                {
+                    field: 'isRed',
+                    title: '是否标红',
+                    formatter: function (value, row, index) {
+                        return isRedTools(row);
                     }
                 },
                 {
@@ -149,6 +170,26 @@
         }
     }
 
+    function isRedTools(row) {
+        if (row.isRed === "1") {
+            return '<i class=\"fa fa-toggle-off text-info fa-2x\" onclick="doRed(\'' + row.id + '\')"></i> ';
+        } else {
+            return '<i class=\"fa fa-toggle-on text-info fa-2x\" onclick="unRed(\'' + row.id + '\')"></i> ';
+        }
+    }
+
+    function unRed(id) {
+        $.modal.confirm('确认解除标红此用户吗？', function () {
+            $.operate.post(prefix + "/changeStatus", {"id": id, "isRed": "1"});
+        })
+    }
+
+    function doRed(id) {
+        $.modal.confirm('确认标红此用户吗？', function () {
+            $.operate.post(prefix + "/changeStatus", {"id": id, "isRed": "0"});
+        })
+    }
+
 
     function statusTools(row) {
         if (row.status === "1") {
@@ -160,13 +201,13 @@
 
     function stop(id) {
         $.modal.confirm('确认禁用此用户吗？', function () {
-            $.operate.post(prefix + "/changeStatus", {"id": id, "status": 1});
+            $.operate.post(prefix + "/changeStatus", {"id": id, "status": "1"});
         })
     }
 
     function start(id) {
         $.modal.confirm('确认解禁此用户吗？', function () {
-            $.operate.post(prefix + "/changeStatus", {"id": id, "status": 0});
+            $.operate.post(prefix + "/changeStatus", {"id": id, "status": "0"});
         })
     }
 
