@@ -89,6 +89,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="isAdmin != null">is_admin = #{isAdmin},</if>
             <if test="status != null">status = #{status},</if>
             <if test="isRed != null">is_red = #{isRed},</if>
+            <if test="nickname != null">nickname = #{nickname},</if>
+            <if test="username != null">username = #{username},</if>
             <if test="remark != null">remark = #{remark},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>

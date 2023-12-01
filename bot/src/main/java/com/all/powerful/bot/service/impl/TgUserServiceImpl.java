@@ -78,7 +78,6 @@ public class TgUserServiceImpl implements ITgUserService {
     @Override
     public int updateTgUser(TgUser tgUser) {
         tgUser.setUpdateTime(DateUtils.getNowDate());
-        tgUser.setUpdateBy(ShiroUtils.getLoginName());
         return tgUserMapper.updateTgUser(tgUser);
     }
 

@@ -3,6 +3,7 @@ package com.all.powerful.bot.controller;
 import java.util.List;
 
 import com.all.powerful.bot.domain.BotList;
+import com.all.powerful.common.utils.ShiroUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -112,6 +113,7 @@ public class TgUserController extends BaseController
     @ResponseBody
     public AjaxResult editSave(TgUser tgUser)
     {
+        tgUser.setUpdateBy(ShiroUtils.getLoginName());
         return toAjax(tgUserService.updateTgUser(tgUser));
     }
 

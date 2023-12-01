@@ -723,19 +723,24 @@ public class DynamicTelegramBot extends TelegramLongPollingBot {
     public void saveUser(Update update) {
         String chatId = String.valueOf(update.getMessage().getChatId());
         String userName = String.valueOf(update.getMessage().getFrom().getUserName());
+        String firstName = update.getMessage().getFrom().getFirstName();
+        if (org.apache.commons.lang3.StringUtils.isNotEmpty(update.getMessage().getFrom().getLastName())) {
+            firstName = firstName + " " + update.getMessage().getFrom().getLastName();
+        }
         TgUser tgUser = SpringUtils.getBean(ITgUserService.class).selectTgUserByUserId(chatId);
         if (tgUser == null) {
             tgUser = new TgUser();
             tgUser.setUserId(chatId);
             tgUser.setUsername(userName);
-            String firstName = update.getMessage().getFrom().getFirstName();
-            if (org.apache.commons.lang3.StringUtils.isNotEmpty(update.getMessage().getFrom().getLastName())) {
-                firstName = firstName + " " + update.getMessage().getFrom().getLastName();
-            }
             tgUser.setNickname(firstName);
             tgUser.setCreateTime(DateUtils.getNowDate());
             tgUser.setCreateBy(userName);
             SpringUtils.getBean(ITgUserService.class).insertTgUser(tgUser);
+        } else {
+            tgUser.setNickname(firstName);
+            tgUser.setUsername(userName);
+            tgUser.setUpdateBy(userName);
+            SpringUtils.getBean(ITgUserService.class).updateTgUser(tgUser);
         }
     }
 

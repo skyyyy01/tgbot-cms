@@ -118,10 +118,10 @@ public class PaymentRecordServiceImpl implements IPaymentRecordService {
                         log.error("通知异常 ->", e);
                     }
                 }
+                tgUserService.updateUserPayCount(record.getUserId(), record.getActualAmount());
             }
             payoutRecord.setUpdateTime(paymentRecord.getUpdateTime());
             payoutRecord.setUpdateBy(StringUtils.isBlank(paymentRecord.getUpdateBy()) ? "admin" : paymentRecord.getUpdateBy());
-            tgUserService.updateUserPayCount(record.getUserId(), record.getActualAmount());
             payoutRecordService.updatePayoutRecordByOrderId(payoutRecord);
         }
         return paymentRecordMapper.updatePaymentRecord(paymentRecord);

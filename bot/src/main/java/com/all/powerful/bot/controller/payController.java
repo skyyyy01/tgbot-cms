@@ -79,6 +79,30 @@ public class payController extends BaseController {
                         if (payCallback.getStatus() == 2) {
                             record.setStatus("0");
                             record.setBlockId(paymentRecordService.selectBlockTransactionId(record.getOrderId()));
+                            try {
+                                BotList botList = new BotList();
+                                botList.setStatus("0");
+                                List<BotList> botLists = botListService.selectBotListList(botList);
+                                if (botLists.size() > 0) {
+                                    BotList bot = botLists.get(0);
+                                    TelegramLongPollingBot tgBot = multiBotManager.getBot(bot.getBotToken());
+                                    SendMessage sendMessage = new SendMessage();
+                                    sendMessage.setChatId(record.getUserId());
+                                    String sb = "<b>\uD83D\uDCE3您有新的【支付成功】请查看我的订单</b>";
+//                                "<pre>订单号：" + record.getOrderId() + "</pre>\n" +
+//                                        "<pre>请求支付金额：" + record.getAmount() + "</pre>\n" +
+//                                        "<pre>实际支付金额：" + record.getActualAmount() + "</pre>\n" +
+//                                        "<pre>钱包地址：" + record.getAddress() + "</pre>\n" +
+//                                        "<pre>订单创建时间：" + DateUtils.parseDateToStr("yyyy-MM-dd HH:mm:ss", record.getCreateTime()) + "</pre>\n" +
+//                                        "<pre>支付成功时间：" + DateUtils.parseDateToStr("yyyy-MM-dd HH:mm:ss", record.getUpdateTime()) + "</pre>";
+                                    sendMessage.setText(sb);
+                                    sendMessage.setParseMode(ParseMode.HTML);
+                                    tgBot.execute(sendMessage);
+                                    updateUserPayCount(record.getUserId(), record.getActualAmount());
+                                }
+                            } catch (Exception e) {
+                                log.error("通知失败,{}", payCallback);
+                            }
                         } else if (payCallback.getStatus() == 3) {
                             record.setStatus("2");
                             record.setBlockId(payCallback.getBlock_transaction_id());
@@ -86,32 +110,6 @@ public class payController extends BaseController {
                             return "wait";
                         }
                         paymentRecordService.updatePaymentRecord(record);
-                        try {
-                            BotList botList = new BotList();
-                            botList.setStatus("0");
-                            List<BotList> botLists = botListService.selectBotListList(botList);
-                            if (botLists.size() > 0) {
-                                BotList bot = botLists.get(0);
-                                TelegramLongPollingBot tgBot = multiBotManager.getBot(bot.getBotToken());
-                                SendMessage sendMessage = new SendMessage();
-                                sendMessage.setChatId(record.getUserId());
-                                String sb = "<b>\uD83D\uDCE3您有新的【支付成功】请查看我的订单</b>";
-//                                "<pre>订单号：" + record.getOrderId() + "</pre>\n" +
-//                                        "<pre>请求支付金额：" + record.getAmount() + "</pre>\n" +
-//                                        "<pre>实际支付金额：" + record.getActualAmount() + "</pre>\n" +
-//                                        "<pre>钱包地址：" + record.getAddress() + "</pre>\n" +
-//                                        "<pre>订单创建时间：" + DateUtils.parseDateToStr("yyyy-MM-dd HH:mm:ss", record.getCreateTime()) + "</pre>\n" +
-//                                        "<pre>支付成功时间：" + DateUtils.parseDateToStr("yyyy-MM-dd HH:mm:ss", record.getUpdateTime()) + "</pre>";
-                                sendMessage.setText(sb);
-                                sendMessage.setParseMode(ParseMode.HTML);
-                                tgBot.execute(sendMessage);
-                                notifyAdmin(record, tgBot);
-                                updateUserPayCount(record.getUserId(), record.getActualAmount());
-                            }
-                        } catch (Exception e) {
-                            log.error("通知失败,{}", payCallback);
-                        }
-
                         return "ok";
                     } else {
                         log.error("金额不匹配,{}", payCallback);
@@ -132,32 +130,6 @@ public class payController extends BaseController {
     private void updateUserPayCount(String userId, BigDecimal payAmount) {
         tgUserService.updateUserPayCount(userId, payAmount);
     }
-
-    @Async
-    public void notifyAdmin(PaymentRecord record, TelegramLongPollingBot tgBot) throws TelegramApiException {
-        TgUser tgUser = new TgUser();
-        tgUser.setIsAdmin("Y");
-        List<TgUser> tgUsers = tgUserService.selectTgUserList(tgUser);
-        if (tgUsers.size() > 0) {
-            for (TgUser user : tgUsers) {
-                SendMessage sendMessage = new SendMessage();
-                sendMessage.setChatId(user.getUserId());
-                String sb = "<b>\uD83D\uDCE2\uD83D\uDCE2有新的交易支付成功！</b>";
-//                        "<pre>订单号：" + record.getOrderId() + "</pre>\n" +
-//                        "<pre>用户名：" + record.getUsername() + "</pre>\n" +
-//                        "<pre>用户ID：" + record.getUserId() + "</pre>\n" +
-//                        "<pre>请求支付金额：" + record.getAmount() + "</pre>\n" +
-//                        "<pre>实际支付金额：" + record.getActualAmount() + "</pre>\n" +
-//                        "<pre>钱包地址：" + record.getAddress() + "</pre>\n" +
-//                        "<pre>订单创建时间：" + DateUtils.parseDateToStr("yyyy-MM-dd HH:mm:ss", record.getCreateTime()) + "</pre>\n" +
-//                        "<pre>支付成功时间：" + DateUtils.parseDateToStr("yyyy-MM-dd HH:mm:ss", record.getUpdateTime()) + "</pre>";
-                sendMessage.setText(sb);
-                sendMessage.setParseMode(ParseMode.HTML);
-                tgBot.execute(sendMessage);
-            }
-        }
-    }
-
 
     private String getSignature(JSONObject jsonObject) {
         String key = SpringUtils.getBean(ISysConfigService.class).selectConfigByKey("api.auth.token");
