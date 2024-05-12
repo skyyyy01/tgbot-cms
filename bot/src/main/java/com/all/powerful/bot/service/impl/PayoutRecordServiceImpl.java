@@ -10,6 +10,7 @@ import com.all.powerful.bot.service.ITgUserService;
 import com.all.powerful.common.core.text.Convert;
 import com.all.powerful.common.utils.DateUtils;
 import com.all.powerful.common.utils.ShiroUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,7 +95,8 @@ public class PayoutRecordServiceImpl implements IPayoutRecordService {
         payoutRecord.setUpdateBy(ShiroUtils.getLoginName());
         PayoutRecord record = payoutRecordMapper.selectPayoutRecordById(payoutRecord.getId());
         if (record.getpStatus().equals("0")){
-            return 0;
+            payoutRecord.setpStatus("0");
+            return payoutRecordMapper.updatePayoutRecord(payoutRecord);
         }
         if ("0".equals(payoutRecord.getpStatus())) {
             try {

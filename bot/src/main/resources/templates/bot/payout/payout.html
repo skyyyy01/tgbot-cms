@@ -200,7 +200,7 @@
                     title: '备注',
                     visible: false,
                     formatter: function(value, row, index) {
-                        return $.table.selectDictLabel(statusDatas, value);
+                        return $.table.tooltip(value,6,'open');
                     }
                 },
                 {
