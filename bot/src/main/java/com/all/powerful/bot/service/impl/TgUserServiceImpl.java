@@ -120,4 +120,11 @@ public class TgUserServiceImpl implements ITgUserService {
     public void updateUserPayoutAmount(String userId, BigDecimal payAmount) {
         tgUserMapper.updateUserPayoutAmount(userId, payAmount);
     }
+
+    //      <!--      调整start      -->
+    @Override
+    public int clearAll(String ids) {
+        return tgUserMapper.clearTgUserByIds(Convert.toStrArray(ids));
+    }
+    //      <!--      调整end      -->
 }

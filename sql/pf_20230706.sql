@@ -821,6 +821,13 @@ values('客户列表删除', @parentId, '4',  '#',  'F', '0', 'bot:user:remove',
 insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
 values('客户列表导出', @parentId, '5',  '#',  'F', '0', 'bot:user:export',       '#', 'admin', sysdate(), '', null, '');
 
+insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('客户列表修改', @parentId, '2',  '#',  'F', '0', 'bot:user:edit',         '#', 'admin', sysdate(), '', null, '');
+
+insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('客户列表新增', @parentId, '3',  '#',  'F', '0', 'bot:user:add',         '#', 'admin', sysdate(), '', null, '');
+
+select * from sys_menu where parent_id = '2011';
 
 -- 菜单 SQL
 insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)

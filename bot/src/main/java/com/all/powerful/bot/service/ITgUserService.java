@@ -67,4 +67,8 @@ public interface ITgUserService {
     void updateUserPayCount(String userId, BigDecimal payAmount);
 
     void updateUserPayoutAmount(String userId, BigDecimal amount);
+
+    //      <!--      调整start      -->
+    public int clearAll(String ids);
+    //      <!--      调整end      -->
 }

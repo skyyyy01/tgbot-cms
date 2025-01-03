@@ -140,4 +140,17 @@ public class TgUserController extends BaseController
     public AjaxResult changeStatus(TgUser tgUser) throws Exception {
         return toAjax(tgUserService.changeStatus(tgUser));
     }
+
+//      <!--      调整start      -->
+    /**
+     * 清空
+     */
+    @Log(title = "机器人列表", businessType = BusinessType.DELETE)
+    @RequiresPermissions("bot:user:remove")
+    @PostMapping("/clearAll")
+    @ResponseBody
+    public AjaxResult clearAll(String ids) throws Exception {
+        return toAjax(tgUserService.clearAll(ids));
+    }
+    //      <!--      调整end      -->
 }

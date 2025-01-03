@@ -66,4 +66,8 @@ public interface TgUserMapper {
     void updateUserPayCount(@Param("userId") String userId, @Param("payAmount") BigDecimal payAmount);
 
     void updateUserPayoutAmount(@Param("userId") String userId, @Param("payAmount") BigDecimal payAmount);
+
+    //      <!--      调整start      -->
+    public int clearTgUserByIds(String[] ids);
+    //      <!--      调整end      -->
 }

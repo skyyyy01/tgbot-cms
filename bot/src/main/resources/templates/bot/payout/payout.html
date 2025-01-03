@@ -55,6 +55,12 @@
                 <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="bot:payout:export">
                     <i class="fa fa-download"></i> 导出
                 </a>
+                <!--      调整start      -->
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()"
+                   shiro:hasPermission="bot:payout:export">
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+                <!--      调整end      -->
             </div>
             <div class="col-sm-12 select-table table-striped">
                 <table id="bootstrap-table"></table>
@@ -81,7 +87,10 @@
                 onEditableSave: onEditableSave,
                 modalName: "下发记录",
                 columns: [{
-                    checkbox: false
+                    // <!--      调整start      -->
+                    //false 改为 true
+                    checkbox: true
+                    // <!--      调整end      -->
                 },
                 {
                     field: 'id',

@@ -122,4 +122,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </delete>
 
+    <!--      调整start      -->
+    <update id="clearTgUserByIds" parameterType="String">
+        update tg_user
+        set pay_amount = 0,pay_count = 0,payout_count = 0
+        where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+    <!--      调整end      -->
+
 </mapper>
