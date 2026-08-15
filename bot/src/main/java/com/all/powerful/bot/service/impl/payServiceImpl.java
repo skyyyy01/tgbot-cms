@@ -145,9 +145,9 @@ public class payServiceImpl implements IPayService {
         return response.toString();
     }
 
+    /** 签名算法自测入口：拼接串末尾需追加 sys_config 中 api.auth.token 的值后再做 MD5 */
     public static void main(String[] args) {
-//        String s = "amount=10&notify_url=http://localhost:8088/index&order_id=202311260350220000&redirect_url=http://localhost:8088/index";
-        String s = "amount=42&notify_url=http://example.com/notify&order_id=20220201030210321&redirect_url=http://example.com/redirectYOUR_API_AUTH_TOKEN";
+        String s = "amount=42&notify_url=http://example.com/notify&order_id=20220201030210321&redirect_url=http://example.com/redirect" + "YOUR_API_AUTH_TOKEN";
 
         System.out.println(md5Hash(s));
     }

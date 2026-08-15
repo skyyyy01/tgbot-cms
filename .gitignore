@@ -36,10 +36,28 @@ nbdist/
 .nb-gradle/
 
 ######################################################################
+# 敏感配置 —— 切勿提交
+.env
+.env.*
+!.env.example
+application-local.yml
+application-prod.yml
+*.pem
+*.key
+*.p12
+*.jks
+
+######################################################################
+# 运行时目录
+uploadPath/
+logs/
+
+######################################################################
 # Others
 *.log
 *.xml.versionsBackup
 *.swp
+.DS_Store
 
 !*/build/*.java
 !*/build/*.html

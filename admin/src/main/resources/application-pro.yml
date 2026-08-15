@@ -8,25 +8,24 @@ powerful:
     copyrightYear: 2023
     # 实例演示开关
     demoEnabled: true
-    # 文件路径 示例（ Windows配置D:/ruoyi/uploadPath，Linux配置 /home/ruoyi/uploadPath）
-    profile: /www/wwwroot/bot
+    # 文件上传路径 示例（ Windows配置D:/bot/uploadPath，Linux配置 /www/wwwroot/bot）
+    profile: ${PROFILE_PATH:/www/wwwroot/bot}
     # 获取ip地址开关
     addressEnabled: false
 
 # 数据源配置
+# 注意：生产环境所有敏感配置项均通过环境变量注入，未设置时应用将启动失败（fail-fast），
+#      请勿在本文件中直接填写账号密码。可参考项目根目录的 .env.example。
 spring:
     datasource:
         type: com.alibaba.druid.pool.DruidDataSource
         driverClassName: com.mysql.cj.jdbc.Driver
         druid:
             # 主库数据源
-            # ***REMOVED***
             master:
-                url: jdbc:mysql://localhost:3306/trx?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
-#                username: root
-#                password: ***REMOVED***
-                username: trx
-                password: ***REMOVED***
+                url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:trx}?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+                username: ${DB_USERNAME}
+                password: ${DB_PASSWORD}
             # 从库数据源
             slave:
                 # 从数据源开关/默认关闭
@@ -60,12 +59,14 @@ spring:
             webStatFilter:
                 enabled: true
             statViewServlet:
-                enabled: true
+                # Druid 监控台会暴露全部 SQL 执行记录，生产环境默认关闭
+                # 确需开启时，请设置 DRUID_STAT_ENABLED=true 并务必配置强密码与 IP 白名单
+                enabled: ${DRUID_STAT_ENABLED:false}
                 # 设置白名单，不填则允许所有访问
-                allow:
+                allow: ${DRUID_ALLOW_IP:127.0.0.1}
                 url-pattern: /druid/*
                 # 控制台管理用户名和密码
-                login-username: admin
+                login-username: ${DRUID_USERNAME:admin}
                 login-password: ${DRUID_PASSWORD:}
             filter:
                 stat:
